@@ -1,0 +1,183 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  color: #535351;
+  font-family: 'Ikarius', Arial, sans-serif;
+}
+
+/* Structure générale de l'application */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.banner {
+  background: #1c1833;
+  color: white;
+  padding: 20px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-bottom: 3px solid #cd9912;
+}
+
+.banner .logo {
+  width: 50px;
+  height: auto;
+  margin-right: 20px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+  z-index: 2;
+}
+
+.banner h1 {
+  font-size: 28px;
+  font-weight: normal;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-family: 'Rodfat', Arial, sans-serif;
+}
+
+
+/* Zone des paramètres (gauche) */
+.params-panel {
+  display: flex;
+  flex-wrap: wrap;
+  width: 450px;
+  padding: 20px;
+  background-color: #f7f6f2;
+  border-right: 1px solid #cd9912;
+  overflow-y: auto;
+}
+
+/* Zone de l'image (droite) */
+.image-panel {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #403838;
+}
+
+.image-canvas {
+  height: calc(100vh - 80px);
+  min-height: 750px;
+  margin-top: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Styling des groupes de paramètres */
+.param-group {
+  display: inline-block;
+  text-align: left;
+  padding: 5px;
+
+  &.width-25 {
+    width: 25%;
+  }
+  &.width-33 {
+    width: 33.33%;
+  }
+  &.width-50 {
+    width: 50%;
+  }
+  &.width-75 {
+    width: 75%;
+  }
+  &.width-100 {
+    width: 100%;
+  }
+}
+
+.param-group label {
+  display: block;
+  margin-bottom: 3px;
+  font-weight: bold;
+  font-size: 14px;
+  color: #b28c40;
+}
+
+.param-group input, .param-group select, textarea {
+  width: 100%;
+  padding: 8px;
+  border: 2px solid #b1b1b1;
+  background: white;
+  border-radius: 4px;
+
+  &:focus {
+    outline: none;
+    border-color: #cd9912;
+  }
+}
+
+body .rsw-editor {
+  border: 2px solid #b1b1b1;
+  background: white;
+  border-radius: 4px;
+}
+
+/* Disposition en ligne pour certains contrôles */
+.param-row {
+  display: flex;
+  gap: 10px;
+}
+
+.param-group.half {
+  width: 50%;
+}
+
+/* Styles des titres */
+h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+h3 {
+  margin-top: 25px;
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+  color: #444;
+  padding-bottom: 5px;
+}
+
+h4 {
+  margin: 15px 0 10px;
+  font-size: 1rem;
+  color: #555;
+}
+
+/* Section des champs de texte */
+.text-field-params {
+  padding: 10px 15px;
+}
+
+/*canvas {*/
+/*  width: 400px;*/
+/*  height: auto;*/
+/*}*/
+
+/* Bouton de téléchargement */
+.download-btn {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.download-btn:hover {
+  background-color: #45a049;
+}

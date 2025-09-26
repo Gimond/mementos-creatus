@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'Rodfat';
+    src: url('/fonts/rodfat_two-demo-webfont.woff2') format('woff2'),
+    url('/fonts/rodfat_two-demo-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Ikarius';
+    src: url('/fonts/ikarius-regular-webfont.woff2') format('woff2'),
+    url('/fonts/ikarius-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
