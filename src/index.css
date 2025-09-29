@@ -13,14 +13,14 @@ html, body {
 
 .content {
   display: flex;
-  min-height: 100vh;
+  min-height: calc(100vh - 75px);
   width: 100%;
 }
 
 .banner {
   background: #1c1833;
   color: white;
-  padding: 20px 40px;
+  height: 75px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -30,7 +30,7 @@ html, body {
 }
 
 .banner .logo {
-  width: 50px;
+  width: 40px;
   height: auto;
   margin-right: 20px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
@@ -49,12 +49,15 @@ html, body {
 /* Zone des paramètres (gauche) */
 .params-panel {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex: 0 0 450px;
   width: 450px;
+  height: calc(100vh - 75px);
   padding: 20px;
   background-color: #f7f6f2;
   border-right: 1px solid #cd9912;
   overflow-y: auto;
+  justify-content: space-between;
 }
 
 /* Zone de l'image (droite) */
@@ -65,12 +68,13 @@ html, body {
   flex-direction: column;
   align-items: center;
   background-color: #403838;
+  overflow-y: auto;
+  max-height: calc(100vh - 75px);
 }
 
 .image-canvas {
   height: calc(100vh - 80px);
   min-height: 750px;
-  margin-top: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -166,9 +170,12 @@ h4 {
 /*  height: auto;*/
 /*}*/
 
-/* Bouton de téléchargement */
-.download-btn {
-  margin-top: 20px;
+.buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.btn {
   padding: 10px 20px;
   background-color: #4CAF50;
   color: white;
@@ -176,6 +183,18 @@ h4 {
   border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
+}
+
+.reset-all-btn {
+  width: 50%;
+  background-color: #cd9912;
+}
+.import-btn {
+  width: 50%;
+  background-color: #4CAF50;
+}
+.download-btn {
+  width: 100%;
 }
 
 .download-btn:hover {
