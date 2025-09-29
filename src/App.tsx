@@ -318,9 +318,9 @@ function App() {
     const canvasHeight = 1609;
 
     // Fonction pour mettre à jour un champ texte
-    const handleTextChange = (id: number, field: string, value: string | number) => {
+    const handleTextChange = (id: number, value: string | number) => {
         setFields(fields.map(item =>
-            item.id === id ? { ...item, [field]: value } : item
+            item.id === id ? { ...item, value: value } : item
         ));
     };
 
@@ -583,11 +583,11 @@ function App() {
                 <div className="params-panel">
                     <div className="fields">
                         {fields.map((field) => (
-                            <div className={`param-group width-${field.fieldSize??'100'}`}>
+                            <div key={`param-group-${field.id}`} className={`param-group width-${field.fieldSize??'100'}`}>
                                 <label htmlFor={`text-${field.id}`}>{field.label}</label>
 
                                 {field.type === 'editor' ?
-                                    <Editor value={field.value} onChange={(e) => handleTextChange(field.id, 'text', e.target.value)}>
+                                    <Editor value={field.value} onChange={(e) => handleTextChange(field.id, e.target.value)}>
                                         <Toolbar>
                                             <BtnBold />
                                             <BtnItalic />
@@ -598,7 +598,7 @@ function App() {
                                         type="text"
                                         id={`text-${field.id}`}
                                         value={field.value}
-                                        onChange={(e) => handleTextChange(field.id, 'text', e.target.value)}
+                                        onChange={(e) => handleTextChange(field.id, e.target.value)}
                                     />
                                 }
                             </div>
