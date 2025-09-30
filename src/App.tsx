@@ -143,7 +143,7 @@ function FieldInput({field, onChange}: { field: Field, onChange: (id: number, va
 }
 
 function App() {
-    const canvasRef = useRef<HTMLCanvasElement>(null);
+    useRef<HTMLCanvasElement>(null);
     const statBlockRef = useRef<any>(null);
     const [fields, setFields] = useState<Field[]>(DEFAULT_FIELDS);
     const [modalOpen, setModalOpen] = useState(false);
@@ -165,7 +165,7 @@ function App() {
     };
 
     const handleDownload = () => {
-        const canvas = canvasRef.current;
+        const canvas = document.querySelector('canvas');
         if (!canvas) return;
 
         const imageURL = canvas.toDataURL('image/png');
