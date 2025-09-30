@@ -1,73 +1,69 @@
-# React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+# ![Mementos Logo](./src/assets/logo.png) Mementos Creatus
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🌟 Présentation
 
-## React Compiler
+Mementos Creatus est un créateur de mementos pour Chroniques Oubliées V2.
+Il s'agit d'un projet non officiel et open source.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🚀 Pour commencer
 
-## Expanding the ESLint configuration
+### Prérequis
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Node.js (v18.0.0 ou plus)
+- npm (v8.0.0 ou plus)
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Clonez le dépôt
+```shell script
+git clone https://github.com/votre-nom/mementos.git
+   cd mementos
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Installez les dépendances
+```shell script
+npm install
 ```
+
+
+3. Lancez l'application en mode développement
+```shell script
+npm run dev
+```
+
+
+4. Ouvrez votre navigateur à l'adresse [http://localhost:5173](http://localhost:5173)
+
+## 🛠️ Technologies utilisées
+
+- **React 19** - Bibliothèque UI moderne et performante
+- **TypeScript** - Pour un code robuste et typé
+- **Vite** - Outil de build ultra-rapide
+- **HTML5 Canvas** - Pour le rendu graphique des cartes
+- **FontFaceObserver** - Pour une gestion fiable du chargement des polices
+- **React Simple WYSIWYG** - Éditeur de texte riche
+
+## 📝 Utilisation
+
+#### Créez
+Personnalisez les champs et téléchargez votre memento au format PNG
+
+#### Importez
+
+
+## 🤝 Contribuer
+
+Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à soumettre une pull request.
+
+1. Forkez le projet
+2. Créez votre branche de fonctionnalité (`git checkout -b feature/ma-nouvelle-fonctionnalite`)
+3. Committez vos changements (`git commit -m 'Ajout d'une super fonctionnalité'`)
+4. Poussez vers la branche (`git push origin feature/ma-nouvelle-fonctionnalite`)
+5. Ouvrez une Pull Request
+
+## 📄 Licence
+
+Ce projet est sous licence MIT - voir le fichier LICENSE pour plus de détails.

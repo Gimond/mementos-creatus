@@ -4,8 +4,10 @@ import Editor, {
     BtnItalic,
     Toolbar
 } from 'react-simple-wysiwyg';
+// import { BsDownload, BsFileEarmarkPlus, BsPlusCircle, BsBoxArrowInRight, BsImage } from "react-icons/bs";
 import {Modal} from "./Modal.tsx";
 import StatBlock from "./StatBlock.tsx";
+import 'fontfaceobserver';
 
 import './App.css'
 import logoImage from './assets/logo.png';
@@ -22,7 +24,7 @@ function App() {
         fontSize: number;
         color: string;
         fontFamily: string;
-        textAlign?: CanvasTextAlign;
+        textAlign?: CanvasTextAlign | undefined;
         rotate?: number;
         prefix?: string;
         editor?: boolean;
@@ -102,8 +104,6 @@ function App() {
     });
 
     // État pour gérer le chargement de l'image de fond
-    const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
-
     const drawHtmlText = (
         ctx: CanvasRenderingContext2D,
         htmlContent: string,
@@ -111,10 +111,12 @@ function App() {
         y: number,
         maxWidth: number,
         lineHeight: number,
-        fontFamily: string,
         fontSize: number,
+        fontFamily: string,
         color: string
     ): number => {
+        ctx.textAlign = 'left';
+
         let currentY = y;
 
         type TextSegment = {
@@ -268,41 +270,7 @@ function App() {
         return currentY;
     };
 
-    // Chargement des polices web
-    useEffect(() => {
-        // Utiliser la Font Loading API pour s'assurer que les polices sont chargées
-        const fontPromises = ['Rodfat', 'Ikarius']
-            .map(font => {
-                // Créer une promesse pour chaque police
-                return new Promise<void>((resolve) => {
-                    // Vérifier si la police est déjà disponible
-                    console.log(document.fonts);
-                    if (document.fonts && document.fonts.check(`12px ${font.value}`)) {
-                        resolve();
-                        return;
-                    }
-
-                    // Sinon, charger la police et attendre qu'elle soit prête
-                    if (document.fonts && document.fonts.load) {
-                        document.fonts.load(`12px ${font.value}`).then(() => {
-                            resolve();
-                        }).catch(() => {
-                            // En cas d'erreur, on résout quand même pour ne pas bloquer l'application
-                            resolve();
-                        });
-                    } else {
-                        // Fallback si l'API Font Loading n'est pas disponible
-                        setTimeout(resolve, 1500);
-                    }
-                });
-            });
-
-        // Attendre que toutes les polices soient chargées
-        Promise.all(fontPromises).then(() => {
-            setFontsLoaded(true);
-            drawCanvas();
-        });
-    }, []);
+    const [backgroundImage, setBackgroundImage] = useState<HTMLImageElement | null>(null);
 
     // Chargement initial de l'image de fond
     useEffect(() => {
@@ -311,6 +279,25 @@ function App() {
         img.onload = () => {
             setBackgroundImage(img);
         };
+
+        // Créer des observateurs pour chaque police
+        const rodfatFont = new FontFaceObserver('Rodfat');
+        const ikariusFont = new FontFaceObserver('Ikarius');
+
+        // Attendre que les polices soient chargées
+        Promise.all([
+            rodfatFont.load(null, 5000),  // Timeout de 5 secondes
+            ikariusFont.load(null, 5000)
+        ])
+        .then(() => {
+            console.log('Polices chargées !');
+            setFontsLoaded(true);
+        })
+        .catch(err => {
+            console.error('Erreur lors du chargement des polices:', err);
+            setFontsLoaded(true);
+        });
+
     }, []);
 
     // Largeur et hauteur fixes de l'image de fond/zone d'affichage
@@ -318,7 +305,7 @@ function App() {
     const canvasHeight = 1609;
 
     // Fonction pour mettre à jour un champ texte
-    const handleTextChange = (id: number, value: string | number) => {
+    const handleTextChange = (id: number, value: string) => {
         setFields(fields.map(item =>
             item.id === id ? { ...item, value: value } : item
         ));
@@ -490,6 +477,8 @@ function App() {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
+        if (!fontsLoaded) return;
+
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
@@ -511,7 +500,7 @@ function App() {
             fields.forEach(field => {
                 field.style.forEach(style => {
                     if (field.type == 'editor') {
-                        drawHtmlText(ctx, field.value, style.x, style.y, 470, 1.3 * style.fontSize, style.fontFamily, style.fontSize, style.color);
+                        drawHtmlText(ctx, field.value, style.x, style.y, 470, 1.3 * style.fontSize, style.fontSize, style.fontFamily, style.color);
                     } else {
                         drawRotatedText(ctx, (style.prefix ?? '') + field.value, style.x, style.y, style.rotate ?? 0, style.fontSize, style.textAlign, style.fontFamily, style.color);
                     }
@@ -523,7 +512,7 @@ function App() {
     // Dessiner le canvas quand les paramètres changent
     useEffect(() => {
         drawCanvas();
-    }, [fields, overlayImage, backgroundImage]);
+    }, [fields, overlayImage, backgroundImage, fontsLoaded]);
 
     // Fonction pour télécharger le canvas comme image
     const handleDownload = () => {
@@ -644,6 +633,7 @@ function App() {
                 titleContent={<h3>Importer un bloc de statistiques</h3>}
                 primaryFn={handleImportAttributes}
                 secondaryFn={() => setModalOpen(false)}
+                cancelFn={() => setModalOpen(false)}
                 content={
                     <>
                         <StatBlock ref={statBlockRef} />

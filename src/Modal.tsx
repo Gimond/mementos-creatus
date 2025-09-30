@@ -1,19 +1,19 @@
 import React, {useEffect} from 'react';
 import './Modal.css'
+import { SlClose } from "react-icons/sl";
 
 interface Props {
     open: boolean;
     cancelFn?: () => void;
     primaryFn?: () => void;
     secondaryFn?: () => void;
-    closeIcon?: string;
     content?: React.ReactNode;
     titleContent?: React.ReactNode;
     className?: string;
 }
 
 export const Modal: React.FC<Props> = (props) => {
-    const {open, cancelFn, primaryFn, secondaryFn, closeIcon, titleContent, content} = props;
+    const {open, cancelFn, primaryFn, secondaryFn, titleContent, content} = props;
 
     // simple useEffect to capture ESC key to close the modal
     useEffect(() => {
@@ -38,7 +38,9 @@ export const Modal: React.FC<Props> = (props) => {
                 {titleContent && (<div className="title">
                         {titleContent}
                         <div className="titleCloseBtn">
-                            <button onClick={cancelFn}>{closeIcon ?? 'X'}</button>
+                            <button onClick={cancelFn}>
+                                <SlClose />
+                            </button>
                         </div>
                     </div>
                 )}
@@ -50,11 +52,13 @@ export const Modal: React.FC<Props> = (props) => {
                 <div className="footer">
                     {secondaryFn && (
                         <button onClick={secondaryFn} id="cancelBtn">
-                            Cancel
+                            Annuler
                         </button>
                     )}
                     {primaryFn && (
-                        <button onClick={primaryFn}>Continue</button>
+                        <button onClick={primaryFn}>
+                            Importer
+                        </button>
                     )}
                 </div>
             </div>
