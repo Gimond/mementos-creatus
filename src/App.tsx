@@ -20,8 +20,8 @@ function useOverlayImage() {
     const [overlayImage, setOverlayImage] = useState<OverlayImageState>({
         x: 0,
         y: 0,
-        width: 535,
-        height: 390,
+        width: 0,
+        height: 0,
         image: new Image(),
         isLoaded: false
     });
@@ -67,8 +67,8 @@ function useOverlayImage() {
         setOverlayImage({
             x: 0,
             y: 0,
-            width: 150,
-            height: 150,
+            width: 0,
+            height: 0,
             image: new Image(),
             isLoaded: false
         });

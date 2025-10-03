@@ -14,7 +14,7 @@
       "id": 1,
       "type": "text",
       "label": "Nom",
-      "defaultValue": "Squelette",
+      "value": "Squelette",
       "fieldSize": "100",
       "style": [
         {
@@ -40,7 +40,7 @@
       "id": 2,
       "type": "text",
       "label": "Type",
-      "defaultValue": "Mort-vivant",
+      "value": "Mort-vivant",
       "fieldSize": "75",
       "style": [
         {
@@ -58,7 +58,7 @@
       "id": 3,
       "type": "text",
       "label": "NC",
-      "defaultValue": "2",
+      "value": "2",
       "fieldSize": "25",
       "style": [
         {
@@ -76,7 +76,7 @@
       "id": 4,
       "type": "text",
       "label": "Taille",
-      "defaultValue": "Petit",
+      "value": "Petit",
       "fieldSize": "100",
       "style": [
         {
@@ -93,7 +93,7 @@
       "id": 5,
       "type": "text",
       "label": "AGI",
-      "defaultValue": "0",
+      "value": "0",
       "fieldSize": "25",
       "style": [
         {
@@ -109,7 +109,7 @@
       "id": 6,
       "type": "text",
       "label": "CON",
-      "defaultValue": "+1",
+      "value": "+1",
       "fieldSize": "25",
       "style": [
         {
@@ -125,7 +125,7 @@
       "id": 7,
       "type": "text",
       "label": "FOR",
-      "defaultValue": "+2",
+      "value": "+2",
       "fieldSize": "25",
       "style": [
         {
@@ -141,7 +141,7 @@
       "id": 8,
       "type": "text",
       "label": "PER",
-      "defaultValue": "-1",
+      "value": "-1",
       "fieldSize": "25",
       "style": [
         {
@@ -157,7 +157,7 @@
       "id": 9,
       "type": "text",
       "label": "CHA",
-      "defaultValue": "-2",
+      "value": "-2",
       "fieldSize": "25",
       "style": [
         {
@@ -173,7 +173,7 @@
       "id": 10,
       "type": "text",
       "label": "INT",
-      "defaultValue": "+4",
+      "value": "+4",
       "fieldSize": "25",
       "style": [
         {
@@ -189,7 +189,7 @@
       "id": 11,
       "type": "text",
       "label": "VOL",
-      "defaultValue": "-4",
+      "value": "-4",
       "fieldSize": "25",
       "style": [
         {
@@ -205,7 +205,7 @@
       "id": 12,
       "type": "text",
       "label": "DEF",
-      "defaultValue": "15 (RD2)",
+      "value": "15 (RD2)",
       "fieldSize": "33",
       "style": [
         {
@@ -221,7 +221,7 @@
       "id": 13,
       "type": "text",
       "label": "PV",
-      "defaultValue": "90",
+      "value": "90",
       "fieldSize": "33",
       "style": [
         {
@@ -237,7 +237,7 @@
       "id": 14,
       "type": "text",
       "label": "Init",
-      "defaultValue": "12",
+      "value": "12",
       "fieldSize": "33",
       "style": [
         {
@@ -262,7 +262,7 @@
       "id": 15,
       "type": "editor",
       "label": "Texte",
-      "defaultValue": "<b>Lorem ipsum dolor sit amet</b>, consectetur adipiscing elit.",
+      "value": "<b>Lorem ipsum dolor sit amet</b>, consectetur adipiscing elit.",
       "fieldSize": "100",
       "style": [
         {
