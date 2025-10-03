@@ -1,45 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import FontFaceObserver from 'fontfaceobserver';
-
-// Types
-export interface TextStyle {
-    x: number;
-    y: number;
-    fontSize: number;
-    color: string;
-    fontFamily: string;
-    textAlign?: CanvasTextAlign;
-    rotate?: number;
-    prefix?: string;
-    editor?: boolean;
-    wrapText?: boolean;
-}
-
-export interface Field {
-    id: number;
-    label: string;
-    value: string;
-    type: string;
-    fieldSize?: string;
-    style: TextStyle[];
-}
-
-export interface OverlayImageState {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    image: HTMLImageElement;
-    isLoaded: boolean;
-}
-
-interface CanvasRendererProps {
-    fields: Field[];
-    overlayImage: OverlayImageState;
-    onCanvasReady?: (canvasRef: React.RefObject<HTMLCanvasElement>) => void;
-    width?: number;
-    height?: number;
-}
+import type { CanvasRendererProps } from './types';
 
 // Constantes
 const CANVAS_WIDTH = 535;
@@ -398,7 +359,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
     // Fournir la référence du canvas au parent si nécessaire
     useEffect(() => {
         if (onCanvasReady) {
-            onCanvasReady(canvasRef);
+            onCanvasReady(canvasRef as React.RefObject<HTMLCanvasElement>);
         }
     }, [canvasRef, onCanvasReady]);
 

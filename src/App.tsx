@@ -6,51 +6,14 @@ import CanvasRenderer from "./CanvasRenderer.tsx";
 import './App.css';
 import logoImage from './assets/logo.png';
 import configData from './config.json';
+import type { Field, OverlayImageState } from './types';
 
-// Types extraits pour améliorer la lisibilité et la réutilisabilité
-type StyleConfig = {
-    x: number;
-    y: number;
-    fontSize: number;
-    color: string;
-    fontFamily: string;
-    prefix?: string;
-    textAlign?: string;
-    rotate?: number;
-    wrapText?: boolean;
-};
-
-type Field = {
-    id: number;
-    type: 'text' | 'editor';
-    label: string;
-    value: string;
-    fieldSize?: string;
-    style: StyleConfig[];
-};
-
-type OverlayImageState = {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    image: HTMLImageElement;
-    isLoaded: boolean;
-};
-
-// Constants extraites
-// Extraire les constantes de la configuration
+// Get vars from config.json
 const CANVAS_WIDTH = configData.canvasSettings.width;
 const CANVAS_HEIGHT = configData.canvasSettings.height;
 const MAX_OVERLAY_WIDTH = configData.overlayImageSettings.maxWidth;
 const MAX_OVERLAY_HEIGHT = configData.overlayImageSettings.maxHeight;
-
-// Convertir les champs de la configuration en champs utilisables par l'application
-const DEFAULT_FIELDS: Field[] = configData.fields.map(field => ({
-    ...field,
-    value: field.defaultValue // Remplacer defaultValue par value
-}));
-
+const FIELDS = configData.fields as unknown as Field[];
 
 // Hook personnalisé pour la gestion des images
 function useOverlayImage() {
@@ -143,9 +106,9 @@ function FieldInput({field, onChange}: { field: Field, onChange: (id: number, va
 }
 
 function App() {
-    useRef<HTMLCanvasElement>(null);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
     const statBlockRef = useRef<any>(null);
-    const [fields, setFields] = useState<Field[]>(DEFAULT_FIELDS);
+    const [fields, setFields] = useState<Field[]>(FIELDS);
     const [modalOpen, setModalOpen] = useState(false);
     const {overlayImage, handleImageChange, resetImage} = useOverlayImage();
 
@@ -165,7 +128,8 @@ function App() {
     };
 
     const handleDownload = () => {
-        const canvas = document.querySelector('canvas');
+        // const canvas = document.querySelector('canvas');
+        const canvas = canvasRef.current;
         if (!canvas) return;
 
         const imageURL = canvas.toDataURL('image/png');
