@@ -37,6 +37,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
             text: string;
             bold: boolean;
             isLineBreak?: boolean;
+            isSeparator?: boolean;
         };
 
         // Fonction helper pour dessiner une ligne
@@ -58,6 +59,20 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
             }
         };
 
+        const drawSeparatorLine = (lineY: number) => {
+            const separatorHeight = 1;
+            const separatorWidth = maxWidth;
+            const separatorX = x + (maxWidth - separatorWidth) / 2;
+
+            ctx.save();
+            ctx.fillStyle = '#e2caa7';
+            ctx.fillRect(separatorX, lineY - 5, separatorWidth, separatorHeight);
+            ctx.restore();
+
+            return lineY + 5;
+        };
+
+
         // Fonction pour parser et dessiner le texte HTML
         const parseAndDrawHtml = (html: string) => {
             // Normalisation du HTML
@@ -68,6 +83,14 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                 .replace(/<div>/g, '<br/>')
                 .replace(/<\/div>/g, '')
                 .replace(/<div>/g, '');
+
+            // Détecter les lignes qui contiennent uniquement "---"
+            html = html.replace(/<br\/>\s*---\s*<br\/>/g, '<hr/><br/>');
+            html = html.replace(/^\s*---\s*<br\/>/g, '<hr/><br/>');
+            html = html.replace(/<br\/>\s*---\s*$/g, '<br/><hr/>');
+            if (html === '---') {
+                html = '<hr/>';
+            }
 
             // Créer un élément temporaire pour parser l'HTML
             const tempDiv = document.createElement('div');
@@ -90,6 +113,12 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                             text: '',
                             bold: false,
                             isLineBreak: true
+                        });
+                    } else if (element.tagName === 'HR') {
+                        textNodes.push({
+                            text: '',
+                            bold: false,
+                            isSeparator: true
                         });
                     } else if (element.tagName === 'B' || element.tagName === 'STRONG') {
                         Array.from(element.childNodes).forEach(childNode => {
@@ -115,6 +144,17 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
             let line: { text: string, bold: boolean }[] = [];
 
             for (const segment of textNodes) {
+                if (segment.isSeparator) {
+                    if (line.length > 0) {
+                        drawLine(line, x, currentY);
+                        currentY += lineHeight;
+                        line = [];
+                    }
+                    currentY = drawSeparatorLine(currentY);
+                    currentX = x;
+                    continue;
+                }
+
                 if (segment.isLineBreak) {
                     if (line.length > 0) {
                         drawLine(line, x, currentY);
