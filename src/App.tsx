@@ -7,6 +7,7 @@ import './App.css';
 import logoImage from './assets/logo.png';
 import configData from './config.json';
 import type { Field, OverlayImageState } from './types';
+import {BsPlusCircle, BsBoxArrowInRight, BsImage} from 'react-icons/bs';
 
 // Get vars from config.json
 const CANVAS_WIDTH = configData.canvasSettings.width;
@@ -161,7 +162,7 @@ function App() {
             }
 
             if (field.label === 'Texte' && attributes.attaques) {
-                updatedField.value = attributes.attaques.join('\n');
+                updatedField.value = attributes.attaques.join('<br/>---<br/>');
             }
 
             return updatedField;
@@ -205,14 +206,17 @@ function App() {
                     </div>
 
                     <div className="buttons">
-                        <button className="btn reset-all-btn" onClick={handleReset}>
+                        <button className="btn btn-secondary reset-all-btn" onClick={handleReset}>
+                            <BsPlusCircle />
                             Nouveau
                         </button>
                         <button className="btn import-btn" onClick={handleImportStatblock}>
+                            <BsBoxArrowInRight />
                             Importer statblock
                         </button>
-                        <button className="btn download-btn" onClick={handleDownload}>
-                            Télécharger l'image
+                        <button className="btn btn-big download-btn" onClick={handleDownload}>
+                            <BsImage />
+                            Telecharger l'image
                         </button>
                     </div>
                 </div>
@@ -234,7 +238,7 @@ function App() {
                 primaryFn={handleImportAttributes}
                 secondaryFn={() => setModalOpen(false)}
                 cancelFn={() => setModalOpen(false)}
-                content={<StatBlock ref={statBlockRef}/>}
+                content={<div>Copiez et collez un bloc de statistiques provenant d'un PDF. Vous pouvez sélectionnez le texte du nom de la créatures jusqu'aux attaques (comprises), Les différentes descriptions suivantes ne seront pas reconnues et risquent de perturber la détection des attaques mais vous pourrez les copier ensuite dans le bloc Texte.<br /><StatBlock ref={statBlockRef}/></div>}
             />
         </div>
     );

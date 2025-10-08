@@ -13,8 +13,10 @@
 }
 
 .modalContainer {
+    position: relative;
     display: flex;
     flex-direction: column;
+    padding: 40px;
     border-radius: 6px;
     overflow: hidden;
     background-color: white;
@@ -27,34 +29,58 @@
     text-align: center;
     align-items: center;
     justify-content: center;
-    padding: 10px 20px;
+    margin-bottom: 20px;
     font-family: 'Rodfat', Arial, sans-serif;
+
+    h3 {
+        margin: 0;
+        padding: 0;
+    }
 }
 
 .titleCloseBtn button {
-    font-size: 0.3rem;
-}
-
-.titleCloseBtn button {
+    width: 25px;
+    height: 25px;
+    padding: 0;
+    margin: 0;
+    position: absolute;
+    top: 25px;
+    right: 25px;
     background-color: transparent;
     border: none;
-    font-size: 25px;
     cursor: pointer;
+
+    svg {
+        width: 100%;
+        height: 100%;
+        fill: #b1b1b1;
+        transition: all 0.3s ease;
+    }
+    &:hover {
+        svg {
+            fill: #000;
+        }
+    }
 }
 
 .modalContainer .body {
-    width: 500px;
+    width: 700px;
     flex: 1;
-    padding: 10px 20px;
+    margin-bottom: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     text-align: center;
 
-    form, textarea {
+    form {
+        margin-top: 20px;
+        width: 100%;
+    }
+    textarea {
         width: 100%;
         height: 240px;
+        resize: vertical;
     }
 }
 
@@ -63,22 +89,13 @@
     justify-content: center;
     align-items: center;
     gap: 20px;
-    padding: 20px;
+    margin-top: 20px;
 }
 
 .modalContainer .footer button {
-    width: 150px;
-    height: 45px;
-    background-color: #1c1833;
-    border: 2px solid #1c1833;
-    color: white;
-    border-radius: 8px;
-    font-size: 20px;
-    cursor: pointer;
+
 }
 
 #cancelBtn {
-    background-color: white;
-    color: #1c1833;
-    border: 2px solid #1c1833;
+
 }

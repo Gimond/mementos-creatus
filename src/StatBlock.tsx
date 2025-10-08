@@ -5,15 +5,7 @@ interface StatBlockProps {
 }
 
 const StatBlock = forwardRef<{ attributes: any }, StatBlockProps>((props, ref) => {
-    const [statblock, setStatblock] = useState<string>(
-        'SHAKAMAK (DÉMON ANCIEN)\\b | NC 1/2\n' +
-        'CRÉATURE NON VIVANTE TAILLE TRÈS PETITE\n' +
-        '| AGI +1 | CON +1 | FOR +1 | PER +2 |\n' +
-        '| CHA +2 | INT +3 | VOL +3 |\n' +
-        '(\n' +
-        '    S)DEF 13 ( V)PV 9 ( I)Init. 12\n' +
-        'Griffes, dents ou tentacules +3 · DM 1d6+1'
-    );
+    const [statblock, setStatblock] = useState<string>();
 
     // Ajout de la propriété attributes avec useState
     const [attributes, setAttributes] = useState<any>({});
@@ -76,11 +68,12 @@ const StatBlock = forwardRef<{ attributes: any }, StatBlockProps>((props, ref) =
         let stats = statBlock.replace(/\r/g, '');
         var rows = stats.split(/\n/);
         var newAttrs: any = {};
+        newAttrs.attaques = [];
         var previousLine = ''; //Au cas d'attaque sur plusieurs lignes
         var previousContainsDM = false;
         var lastPrefix = ''; //Pour les suites d'attaque sur la ligne suivante
         var firstLine = true; //si la première ligne ne correspond à rien, c'est le nom
-        rows.push(''); // add an empty line at the end to make sure the last row is processed
+        rows.push(' '); // add an empty line at the end to make sure the last row is processed
         rows.forEach(function (row) {
             row = row.trim();
             row.normalize("NFD").replace(/[\u{0080}-\u{FFFF}]/gu,""); // clean unicode characters
@@ -89,44 +82,40 @@ const StatBlock = forwardRef<{ attributes: any }, StatBlockProps>((props, ref) =
                 newAttrs.Nom = row.split(' | ')[0].split('\\')[0].trim();
             }
 
-            if (row.search(/\s·\sDM\b/i) >= 0) {
-                previousLine += row + ' ';
-                previousContainsDM = true;
-            } else if (previousContainsDM || row.search(/\s·\sDM\b/i) >= 0) { //Attaque
-
-                if (row.search(/\s·\sDM\b/i) >= 0) {
+            if (previousContainsDM) {
+                /*
+                * ARTHROPODE (GRAND) | NC 5
+CRÉATURE VIVANTE TAILLE GRANDE
+| AGI +3* | CON +6* | FOR +6* | PER +2 |
+| CHA ‑4 | INT ‑4 | VOL +0 |
+(
+S)DEF 20 ( V)PV 60 ( I)Init. 12
+Pinces +10 · DM 2d8+6
+Dard +10 · DM 1d6 + poison (2d8, difficulté 15
+pour ½ · DM)
+                * */
+                if (row.search(/\s*·\s*DM\s/i) >= 0) {
+                    console.log("La ligne ---" + row + "--- est une nouvelle attaque, on affiche la précédente : " + previousLine);
                     // cette ligne contient des DM c'est une nouvelle attaque, on traite la précédente
-                    var currentRow = previousLine;
+                    var {nomAttaque, bonusAttaque, DM} = parseAttaque(previousLine);
+                    newAttrs.attaques.push('<b>' + nomAttaque.trim() + '</b> ' + bonusAttaque.trim() + ' · <b>DM</b> ' + DM);
+
+                    previousLine = row + ' ';
+                    previousContainsDM = true;
                 } else {
+                    console.log("La ligne ---" + row + "--- est la suite d'une attaque, on l'affiche avec la ligne précédente précédente : " + previousLine);
                     // cette ligne ne contient pas DM, c'est la suite de la ligne précédente
                     var currentRow = previousLine + row;
+                    var {nomAttaque, bonusAttaque, DM} = parseAttaque(currentRow);
+                    newAttrs.attaques.push('<b>' + nomAttaque.trim() + '</b> ' + bonusAttaque.trim() + ' · <b>DM</b> ' + DM);
+
+                    previousContainsDM = false;
+                    previousLine = '';
                 }
-
-                var AttaqueLine = currentRow.split(' · ');
-                var Attaque = AttaqueLine[0].trim();
-                var DM = AttaqueLine[1]?.trim() || '';
-
-                var nomAttaque = "";
-                var bonusAttaque = "";
-                Attaque.split(' ').forEach(function (n) {
-                    if (n.match(/\([^)]\)/i) !== null || n.match(/(\+\d+)/i) !== null) {
-                        bonusAttaque += n + " ";
-                    } else {
-                        nomAttaque += n + " ";
-                    }
-                });
-
-                DM = DM.replace('DM', '').trim();
-
-                if (!newAttrs.attaques) {
-                    newAttrs.attaques = [];
-                }
-                newAttrs.attaques.push(
-                    '<b>' + nomAttaque.trim() + '</b> ' + bonusAttaque.trim() + ' · <b>DM</b> ' + DM
-                );
-
-                previousContainsDM = false;
-                previousLine = '';
+            } else if (row.search(/\s*·\s*DM\s/i) >= 0) {
+                console.log("La ligne " + row + " est une attaque mais sera traitée au prochain tour");
+                previousLine += row + ' ';
+                previousContainsDM = true;
             } else if (row.startsWith('+') && lastPrefix !== '') {
                 newAttrs[lastPrefix + 'spec'] += row;
             } else { //Pas attaque
@@ -181,10 +170,32 @@ const StatBlock = forwardRef<{ attributes: any }, StatBlockProps>((props, ref) =
         });
         newAttrs.max_attack_label = maxAttack;
 
-        console.log(newAttrs);
-
         setAttributes(newAttrs);
         return newAttrs;
+    };
+
+    const parseAttaque = (line: string) => {
+        var AttaqueLine = line.split(/ · (.*)/s);
+        var Attaque = AttaqueLine[0].trim();
+        var DM = AttaqueLine[1]?.trim() || '';
+
+        var nomAttaque = "";
+        var bonusAttaque = "";
+        Attaque.split(' ').forEach(function (n) {
+            if (n.match(/\([^)]\)/i) !== null || n.match(/(\+\d+)/i) !== null) {
+                bonusAttaque += n + " ";
+            } else {
+                nomAttaque += n + " ";
+            }
+        });
+
+        DM = DM.replace('DM', '').trim();
+
+        return {
+            nomAttaque,
+            bonusAttaque,
+            DM
+        };
     };
 
     return (
