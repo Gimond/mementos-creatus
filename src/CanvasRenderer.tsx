@@ -43,7 +43,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
 
         // Fonction helper pour dessiner une ligne
         const drawLine = (
-            segments: { text: string, bold: boolean }[],
+            segments: { text: string, bold: boolean, italic: boolean }[],
             startX: number,
             lineY: number
         ) => {
@@ -108,7 +108,8 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                 if (node.nodeType === Node.TEXT_NODE) {
                     textNodes.push({
                         text: node.textContent || '',
-                        bold: false
+                        bold: false,
+                        italic: false
                     });
                 } else if (node.nodeType === Node.ELEMENT_NODE) {
                     const element = node as HTMLElement;
@@ -117,12 +118,14 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                         textNodes.push({
                             text: '',
                             bold: false,
+                            italic: false,
                             isLineBreak: true
                         });
                     } else if (element.tagName === 'HR') {
                         textNodes.push({
                             text: '',
                             bold: false,
+                            italic: false,
                             isSeparator: true
                         });
                     } else if (element.tagName === 'B' || element.tagName === 'STRONG') {
@@ -130,7 +133,8 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                             if (childNode.nodeType === Node.TEXT_NODE) {
                                 textNodes.push({
                                     text: childNode.textContent || '',
-                                    bold: true
+                                    bold: true,
+                                    italic: false
                                 });
                             } else {
                                 parseNode(childNode);

@@ -30,7 +30,7 @@ export interface OverlayImageState {
 }
 
 export interface CanvasRendererProps {
-    ref: string,
+    ref: React.RefObject<HTMLCanvasElement | null>,
     fields: Field[];
     overlayImage: OverlayImageState;
     onCanvasReady?: (canvasRef: React.RefObject<HTMLCanvasElement>) => void;
