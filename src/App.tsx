@@ -261,8 +261,8 @@ function App() {
                     <div>
                         <p>Memento Creatus est un créateur de mementos pour Chroniques Oubliées V2.</p>
                         <p>Il s'agit d'un projet non officiel et open source.</p>
-                        <p>Version: </p>
-                        <p>Pour plus d'informations, visitez le <a href="https://github.com/votre-nom/mementos" target="_blank" rel="noopener noreferrer">dépôt GitHub</a>.</p>
+                        <p>Version: 0.1</p>
+                        <p>Pour plus d'informations, visitez le <a href="https://github.com/Gimond/mementos-creatus" target="_blank" rel="noopener noreferrer">dépôt GitHub</a>.</p>
                         <p>Vous ne voyez pas de bannière de cookies ? C'est normal, ce site n'en utilise pas.</p>
                     </div>
                 }

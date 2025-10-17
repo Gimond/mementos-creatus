@@ -18,8 +18,8 @@ Il s'agit d'un projet non officiel et open source.
 
 1. Clonez le dépôt
 ```shell script
-git clone https://github.com/votre-nom/mementos.git
-   cd mementos
+git clone https://github.com/Gimond/mementos-creatus
+   cd mementos-creatus
 ```
 
 
