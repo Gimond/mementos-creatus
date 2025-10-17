@@ -172,8 +172,10 @@ function App() {
         setModalOpen(false);
     };
 
-    const handleCanvasReady = () => {
-        // Fonction gardée pour compatibilité
+    const handleCanvasReady = (canvasRefFromChild: React.RefObject<HTMLCanvasElement>) => {
+        if (canvasRefFromChild && canvasRefFromChild.current) {
+            canvasRef.current = canvasRefFromChild.current;
+        }
     };
 
     return (
@@ -223,6 +225,7 @@ function App() {
 
                 <div className="image-panel">
                     <CanvasRenderer
+                        ref={canvasRef}
                         fields={fields}
                         overlayImage={overlayImage}
                         onCanvasReady={handleCanvasReady}

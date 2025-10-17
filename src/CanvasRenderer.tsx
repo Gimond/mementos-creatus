@@ -36,6 +36,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
         type TextSegment = {
             text: string;
             bold: boolean;
+            italic: boolean;
             isLineBreak?: boolean;
             isSeparator?: boolean;
         };
@@ -50,8 +51,12 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
             ctx.fillStyle = color;
 
             for (const segment of segments) {
-                ctx.font = segment.bold
-                    ? `bold ${fontSize}px ${fontFamily}`
+                let fontStyle = '';
+                if (segment.bold) fontStyle += 'bold ';
+                if (segment.italic) fontStyle += 'italic ';
+
+                ctx.font = fontStyle
+                    ? `${fontStyle}${fontSize}px ${fontFamily}`
                     : `${fontSize}px ${fontFamily}`;
 
                 ctx.fillText(segment.text, posX, lineY);
@@ -131,6 +136,18 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                                 parseNode(childNode);
                             }
                         });
+                    } else if (element.tagName === 'I' || element.tagName === 'EM') {
+                        Array.from(element.childNodes).forEach(childNode => {
+                            if (childNode.nodeType === Node.TEXT_NODE) {
+                                textNodes.push({
+                                    text: childNode.textContent || '',
+                                    bold: false,
+                                    italic: true
+                                });
+                            } else {
+                                parseNode(childNode);
+                            }
+                        })
                     } else {
                         Array.from(element.childNodes).forEach(parseNode);
                     }
@@ -141,7 +158,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
 
             // Dessiner le texte formaté avec retour à la ligne
             let currentX = x;
-            let line: { text: string, bold: boolean }[] = [];
+            let line: { text: string, bold: boolean, italic: boolean }[] = [];
 
             for (const segment of textNodes) {
                 if (segment.isSeparator) {
@@ -184,10 +201,10 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                         currentY += lineHeight;
                         line = [];
                         currentX = x;
-                        line.push({ text: wordWithSpace, bold: segment.bold });
+                        line.push({ text: wordWithSpace, bold: segment.bold, italic: segment.italic });
                         currentX += wordWidth;
                     } else {
-                        line.push({ text: wordWithSpace, bold: segment.bold });
+                        line.push({ text: wordWithSpace, bold: segment.bold, italic: segment.italic });
                         currentX += wordWidth;
                     }
                 }
