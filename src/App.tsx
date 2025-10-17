@@ -7,7 +7,7 @@ import './App.css';
 import logoImage from './assets/logo.png';
 import configData from './config.json';
 import type { Field, OverlayImageState } from './types';
-import {BsPlusCircle, BsBoxArrowInRight, BsImage} from 'react-icons/bs';
+import {BsPlusCircle, BsBoxArrowInRight, BsImage, BsInfoCircle} from 'react-icons/bs';
 
 // Get vars from config.json
 const CANVAS_WIDTH = configData.canvasSettings.width;
@@ -111,6 +111,7 @@ function App() {
     const statBlockRef = useRef<any>(null);
     const [fields, setFields] = useState<Field[]>(FIELDS);
     const [modalOpen, setModalOpen] = useState(false);
+    const [infoModalOpen, setInfoModalOpen] = useState(false);
     const {overlayImage, handleImageChange, resetImage} = useOverlayImage();
 
     // Gestionnaires d'événements pour les champs
@@ -178,6 +179,10 @@ function App() {
         }
     };
 
+    const handleInfoClick = () => {
+        setInfoModalOpen(true);
+    };
+
     return (
         <div className="app-container">
             <div className="banner">
@@ -232,6 +237,10 @@ function App() {
                         width={CANVAS_WIDTH}
                         height={CANVAS_HEIGHT}
                     />
+
+                    <div className="info-button" onClick={handleInfoClick}>
+                        <BsInfoCircle />
+                    </div>
                 </div>
             </div>
 
@@ -241,8 +250,24 @@ function App() {
                 primaryFn={handleImportAttributes}
                 secondaryFn={() => setModalOpen(false)}
                 cancelFn={() => setModalOpen(false)}
-                content={<div>Copiez et collez un bloc de statistiques provenant d'un PDF. Vous pouvez sélectionnez le texte du nom de la créatures jusqu'aux attaques (comprises), Les différentes descriptions suivantes ne seront pas reconnues et risquent de perturber la détection des attaques mais vous pourrez les copier ensuite dans le bloc Texte.<br /><StatBlock ref={statBlockRef}/></div>}
+                content={<div>Copiez et collez un bloc de statistiques provenant d'un PDF. Vous pouvez sélectionner le texte du nom de la créature jusqu'aux attaques (comprises), Les différentes descriptions suivantes ne seront pas reconnues et risquent de perturber la détection des attaques, mais vous pourrez les copier ensuite dans le bloc Texte.<br /><StatBlock ref={statBlockRef}/></div>}
             />
+
+            <Modal
+                open={infoModalOpen}
+                titleContent={<h3>A propos de Memento Creatus</h3>}
+                cancelFn={() => setInfoModalOpen(false)}
+                content={
+                    <div>
+                        <p>Memento Creatus est un créateur de mementos pour Chroniques Oubliées V2.</p>
+                        <p>Il s'agit d'un projet non officiel et open source.</p>
+                        <p>Version: </p>
+                        <p>Pour plus d'informations, visitez le <a href="https://github.com/votre-nom/mementos" target="_blank" rel="noopener noreferrer">dépôt GitHub</a>.</p>
+                        <p>Vous ne voyez pas de bannière de cookies ? C'est normal, ce site n'en utilise pas.</p>
+                    </div>
+                }
+            />
+
         </div>
     );
 }
