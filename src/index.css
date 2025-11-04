@@ -134,6 +134,17 @@ html, body {
   }
 }
 
+.param-group input[type="checkbox"] {
+  display: inline-block;
+  width: auto;
+  margin-right: 7px;
+  padding: 0;
+}
+
+.checkbox-group label {
+  display: inline-block;
+}
+
 body .rsw-editor {
   border: 2px solid var(--color-grey-light);
   background: white;

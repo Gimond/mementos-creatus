@@ -36,4 +36,5 @@ export interface CanvasRendererProps {
     onCanvasReady?: (canvasRef: React.RefObject<HTMLCanvasElement>) => void;
     width?: number;
     height?: number;
+    printerFriendly?: boolean;
 }
