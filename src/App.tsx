@@ -112,6 +112,7 @@ function App() {
     const [fields, setFields] = useState<Field[]>(FIELDS);
     const [modalOpen, setModalOpen] = useState(false);
     const [infoModalOpen, setInfoModalOpen] = useState(false);
+    const [printerFriendly, setPrinterFriendly] = useState(false);
     const {overlayImage, handleImageChange, resetImage} = useOverlayImage();
 
     // Gestionnaires d'événements pour les champs
@@ -156,7 +157,7 @@ function App() {
 
         const attributes = statBlockRef.current.attributes;
         const updatedFields = fields.map(field => {
-            let updatedField = {...field};
+            const updatedField = {...field};
 
             if (attributes[field.label]) {
                 updatedField.value = attributes[field.label];
@@ -210,6 +211,15 @@ function App() {
                                 onChange={handleImageChange}
                             />
                         </div>
+
+                        <div className="param-group checkbox-group">
+                            <input
+                                type="checkbox"
+                                checked={printerFriendly}
+                                onChange={(e) => setPrinterFriendly(e.target.checked)}
+                            />
+                            <label>Printer friendly</label>
+                        </div>
                     </div>
 
                     <div className="buttons">
@@ -236,6 +246,7 @@ function App() {
                         onCanvasReady={handleCanvasReady}
                         width={CANVAS_WIDTH}
                         height={CANVAS_HEIGHT}
+                        printerFriendly={printerFriendly}
                     />
 
                     <div className="info-button" onClick={handleInfoClick}>

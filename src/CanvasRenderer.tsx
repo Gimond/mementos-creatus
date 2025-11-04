@@ -12,7 +12,8 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                                                            overlayImage,
                                                            onCanvasReady,
                                                            width = CANVAS_WIDTH,
-                                                           height = CANVAS_HEIGHT
+                                                           height = CANVAS_HEIGHT,
+                                                           printerFriendly = false
                                                        }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [backgroundImage, setBackgroundImage] = React.useState<HTMLImageElement | null>(null);
@@ -389,7 +390,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
     useEffect(() => {
         // Chargement de l'image de fond
         const img = new Image();
-        img.src = '/background.png';
+        img.src = printerFriendly ? '/background-printer-friendly.png' : '/background.png';
         img.onload = () => {
             setBackgroundImage(img);
         };
@@ -410,7 +411,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                 console.error('Erreur lors du chargement des polices:', err);
                 setFontsLoaded(true); // On continue même en cas d'erreur
             });
-    }, []);
+    }, [printerFriendly]);
 
     // Mise à jour du canvas lors des changements
     useEffect(() => {
