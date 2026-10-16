@@ -22,31 +22,31 @@ const TEMPLATE_OPTIONS: { key: string, label: string, separators?: Separator[] }
 const NO_SEPARATORS: Separator[] = [];
 const FIELD_GROUPS = configData.fieldGroups;
 const FOLD = configData.foldSettings;
-const FOLD_STORAGE_KEY = 'foldWidth';
+const BACKGROUNDS = configData.backgroundSettings.options;
 // Résolution supposée à l'impression, pour afficher la largeur du pli en millimètres
 const PRINT_DPI = 300;
 
-// Largeur du pli mémorisée : elle dépend de l'écran du MJ, pas de la créature
-function useFoldWidth() {
-    const [foldWidth, setFoldWidth] = useState(() => {
+// Réglage mémorisé dans le navigateur : il dépend du matériel du MJ (écran, imprimante), pas de la créature
+function useStoredChoice<T extends string | number>(storageKey: string, choices: T[], fallback: T) {
+    const [value, setValue] = useState<T>(() => {
         try {
-            const stored = Number(localStorage.getItem(FOLD_STORAGE_KEY));
-            return FOLD.presets.some(preset => preset.width === stored) ? stored : FOLD.default;
+            const stored = localStorage.getItem(storageKey);
+            return choices.find(choice => String(choice) === stored) ?? fallback;
         } catch {
-            return FOLD.default;
+            return fallback;
         }
     });
 
-    const updateFoldWidth = (value: number) => {
-        setFoldWidth(value);
+    const updateValue = (newValue: T) => {
+        setValue(newValue);
         try {
-            localStorage.setItem(FOLD_STORAGE_KEY, String(value));
+            localStorage.setItem(storageKey, String(newValue));
         } catch {
             // Stockage indisponible (navigation privée) : le réglage ne sera pas mémorisé
         }
     };
 
-    return {foldWidth, updateFoldWidth};
+    return [value, updateValue] as const;
 }
 
 const applyTemplate = (field: Field, template: string): Field => ({...field, ...field.variants?.[template]});
@@ -135,7 +135,9 @@ function App() {
     const [textOverflow, setTextOverflow] = useState(false);
     const [playerLabelKey, setPlayerLabelKey] = useState(configData.playerLabelSettings.default);
     const [template, setTemplate] = useState(configData.templateSettings.default);
-    const {foldWidth, updateFoldWidth} = useFoldWidth();
+    const [foldWidth, updateFoldWidth] = useStoredChoice('foldWidth', FOLD.presets.map(preset => preset.width), FOLD.default);
+    const [backgroundKey, updateBackgroundKey] = useStoredChoice('background', BACKGROUNDS.map(background => background.key), configData.backgroundSettings.default);
+    const backgroundSrc = BACKGROUNDS.find(background => background.key === backgroundKey)!.src;
     const {overlayImage, loadImageFile, handleImageChange, updatePlacement, resetPlacement, resetImage} = useOverlayImage();
     const [isDraggingImage, setIsDraggingImage] = useState(false);
 
@@ -371,6 +373,19 @@ function App() {
                                     ))}
                                 </select>
                             </div>
+
+                            <div className="param-group width-100">
+                                <label htmlFor="background">Fond de carte</label>
+                                <select
+                                    id="background"
+                                    value={backgroundKey}
+                                    onChange={(e) => updateBackgroundKey(e.target.value)}
+                                >
+                                    {BACKGROUNDS.map(background => (
+                                        <option key={background.key} value={background.key}>{background.label}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </section>
                 </div>
@@ -393,6 +408,7 @@ function App() {
                         overlayScaleRange={OVERLAY_SCALE_RANGE}
                         onOverlayChange={updatePlacement}
                         fold={fold}
+                        backgroundSrc={backgroundSrc}
                         separators={separators}
                         onCanvasReady={handleCanvasReady}
                         onTextOverflow={setTextOverflow}

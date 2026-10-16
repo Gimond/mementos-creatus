@@ -23,6 +23,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                                                            overlayScaleRange,
                                                            onOverlayChange,
                                                            fold,
+                                                           backgroundSrc,
                                                            separators,
                                                            onCanvasReady,
                                                            onTextOverflow,
@@ -446,16 +447,21 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
         onTextOverflow?.(textOverflow);
     };
 
-    // Chargement initial des ressources
+    // Chargement de l'image de fond, l'ancienne reste affichée jusqu'à ce que la nouvelle soit prête
     useEffect(() => {
-        // Chargement de l'image de fond
+        let cancelled = false;
         const img = new Image();
-        img.src = '/background.png';
+        img.src = backgroundSrc;
         img.onload = () => {
-            setBackgroundImage(img);
+            if (!cancelled) setBackgroundImage(img);
         };
+        return () => {
+            cancelled = true;
+        };
+    }, [backgroundSrc]);
 
-        // Chargement des polices
+    // Chargement des polices
+    useEffect(() => {
         const fonts = [
             new FontFaceObserver('Rodfat'),
             new FontFaceObserver('SourceSans3'),

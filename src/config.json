@@ -3,6 +3,21 @@
     "width": 535,
     "height": 1609
   },
+  "backgroundSettings": {
+    "default": "couleur",
+    "options": [
+      {
+        "key": "couleur",
+        "label": "Couleur",
+        "src": "/background.png"
+      },
+      {
+        "key": "impression",
+        "label": "Économie d'encre",
+        "src": "/background-printer-friendly.png"
+      }
+    ]
+  },
   "overlayImageSettings": {
     "x": 0,
     "y": 0,

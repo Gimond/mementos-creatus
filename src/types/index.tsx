@@ -78,6 +78,7 @@ export interface CanvasRendererProps {
     overlayScaleRange: [number, number];
     onOverlayChange?: (placement: Partial<OverlayPlacement>) => void;
     fold: FoldLayout;
+    backgroundSrc: string;
     separators: Separator[];
     onCanvasReady?: (canvasRef: React.RefObject<HTMLCanvasElement>) => void;
     onTextOverflow?: (overflow: boolean) => void;
