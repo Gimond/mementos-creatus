@@ -5,9 +5,12 @@ Variables
   --color-gold: #ba9345;
   --color-gold-light: #ba9345;
   --color-gold-dark: #9a7335;
+  --color-gold-pale: #f3ead8;
   --color-grey: #484745;
   --color-grey-light: #b1b1b1;
   --color-dark-blue: #1c1833;
+  --color-panel: #f7f7f5;
+  --banner-height: 64px;
 }
 
 html, body {
@@ -15,6 +18,15 @@ html, body {
   padding: 0;
   color: var(--color-grey);
   font-family: 'Ikarius', Arial, sans-serif;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 /* Structure générale de l'application */
@@ -25,51 +37,209 @@ html, body {
 
 .content {
   display: flex;
-  min-height: calc(100vh - 75px);
+  height: calc(100vh - var(--banner-height));
   width: 100%;
 }
 
+/* Bandeau et barre d'actions */
 .banner {
   background: var(--color-dark-blue);
   color: white;
-  height: 75px;
+  height: var(--banner-height);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 20px;
   position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-bottom: 3px solid var(--color-gold);
 }
 
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
 .banner .logo {
-  width: 40px;
+  width: 36px;
   height: auto;
-  margin-right: 20px;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-  z-index: 2;
 }
 
 .banner h1 {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: normal;
   margin: 0;
+  white-space: nowrap;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   font-family: 'Rodfat', Arial, sans-serif;
 }
 
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Boutons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--color-gold);
+  border: 2px solid var(--color-gold);
+  color: white;
+  border-radius: 8px;
+  font-size: 16px;
+  line-height: 1.2;
+  cursor: pointer;
+  padding: 8px 16px;
+  transition: all 0.2s ease;
+  font-family: 'Rodfat', Arial, sans-serif;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  &:hover {
+    background-color: var(--color-gold-dark);
+    border-color: var(--color-gold-dark);
+  }
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--color-gold);
+
+  &:hover {
+    background-color: var(--color-gold-pale);
+    color: var(--color-gold-dark);
+  }
+}
+
+/* Bouton discret sur le bandeau sombre */
+.btn-ghost {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.25);
+  color: white;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+    border-color: var(--color-gold);
+  }
+}
+
+/* Bouton discret sur fond clair */
+.btn-ghost-dark {
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--color-grey);
+  font-family: inherit;
+
+  &:hover {
+    background-color: transparent;
+    border-color: transparent;
+    color: #b3261e;
+  }
+}
+
+.btn-small {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+  &:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+}
 
 /* Zone des paramètres (gauche) */
 .params-panel {
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 450px;
-  width: 450px;
-  height: calc(100vh - 75px);
-  padding: 20px;
-  background-color: #f7f7f5;
+  flex: 0 0 460px;
+  width: 460px;
+  padding: 16px 20px 32px;
+  background-color: var(--color-panel);
   border-right: 1px solid var(--color-gold);
   overflow-y: auto;
-  justify-content: space-between;
+}
+
+/* Choix du modèle PNJ / PJ */
+.segmented {
+  display: flex;
+  padding: 3px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background-color: #e8e4dc;
+
+  button {
+    flex: 1;
+    padding: 7px 10px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--color-grey);
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &.active {
+      background-color: white;
+      color: var(--color-gold-dark);
+      font-weight: bold;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--color-gold);
+    }
+  }
+}
+
+.form-section {
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid #e4dfd5;
+
+  h2 {
+    margin: 0 0 6px;
+    font-family: 'Rodfat', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: normal;
+    letter-spacing: 0.03em;
+    color: var(--color-gold-dark);
+  }
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px 10px;
 }
 
 /* Zone de l'image (droite) */
@@ -81,52 +251,80 @@ html, body {
   align-items: center;
   background-color: #403838;
   overflow-y: auto;
-  max-height: calc(100vh - 75px);
+}
+
+.image-panel {
+  position: relative;
+
+  &.dragging {
+    outline: 3px dashed var(--color-gold);
+    outline-offset: -12px;
+
+    .image-canvas {
+      opacity: 0.6;
+    }
+  }
+}
+
+.drop-hint {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  padding: 12px 20px;
+  border-radius: 8px;
+  background-color: var(--color-dark-blue);
+  color: white;
+  font-family: 'Rodfat', Arial, sans-serif;
+  font-size: 18px;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 .image-canvas {
-  height: calc(100vh - 80px);
+  height: calc(100vh - var(--banner-height) - 40px);
   min-height: 750px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
 
 /* Styling des groupes de paramètres */
 .param-group {
-  display: inline-block;
   text-align: left;
-  padding: 5px;
+  min-width: 0;
 
   &.width-25 {
-    width: 25%;
+    grid-column: span 3;
   }
   &.width-33 {
-    width: 33.33%;
+    grid-column: span 4;
   }
   &.width-50 {
-    width: 50%;
+    grid-column: span 6;
   }
   &.width-75 {
-    width: 75%;
+    grid-column: span 9;
   }
   &.width-100 {
-    width: 100%;
+    grid-column: span 12;
   }
 }
 
 .param-group label {
   display: block;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
   font-weight: bold;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--color-grey);
 }
 
 .param-group input, .param-group select, textarea {
   width: 100%;
-  padding: 8px 8px 5px;
-  border: 2px solid var(--color-grey-light);
+  padding: 6px 8px 4px;
+  border: 2px solid #d6d3cc;
   background: white;
-  border-radius: 4px;
+  border-radius: 6px;
 
   &:focus {
     outline: none;
@@ -134,13 +332,59 @@ html, body {
   }
 }
 
+.param-group.field-hint {
+  margin: 0;
+  font-size: 13px;
+  color: #77736b;
+}
+
+.param-group .field-warning {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #b3261e;
+}
+
+.param-group input[type="range"] {
+  padding: 0;
+  border: none;
+  background: transparent;
+  accent-color: var(--color-gold);
+}
+
+.param-group.file-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .visually-hidden {
+    width: 1px;
+    padding: 0;
+    border: 0;
+  }
+  label.btn {
+    display: inline-flex;
+    margin: 0;
+    font-weight: normal;
+    font-size: 14px;
+    color: var(--color-gold);
+
+    &:hover {
+      color: var(--color-gold-dark);
+    }
+  }
+  .visually-hidden:focus-visible + label.btn {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
 body .rsw-editor {
-  border: 2px solid var(--color-grey-light);
+  border: 2px solid #d6d3cc;
   background: white;
-  border-radius: 4px;
+  border-radius: 6px;
 
   .rsw-ce {
-    min-height: 240px;
+    min-height: 200px;
   }
   &:has(.rsw-ce:focus) {
     outline: none;
@@ -148,142 +392,97 @@ body .rsw-editor {
   }
 }
 
-/* Disposition en ligne pour certains contrôles */
-.param-row {
-  display: flex;
-  gap: 10px;
-}
-
-.param-group.half {
-  width: 50%;
-}
-
-/* Styles des titres */
-h2 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.5rem;
-  color: #333;
-}
-
-h3 {
-  margin-top: 25px;
-  margin-bottom: 15px;
-  font-size: 1.2rem;
-  color: #444;
-  padding-bottom: 5px;
-}
-
-h4 {
-  margin: 15px 0 10px;
-  font-size: 1rem;
-  color: #555;
-}
-
-/* Section des champs de texte */
-.text-field-params {
-  padding: 10px 15px;
-}
-
-/*canvas {*/
-/*  width: 400px;*/
-/*  height: auto;*/
-/*}*/
-
-.buttons {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 40px;
-}
-.btn {
-  background-color: var(--color-gold);
-  border: 2px solid var(--color-gold);
-  color: white;
-  border-radius: 8px;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 10px 18px;
-  transition: all 0.3s ease;
-  font-family: 'Rodfat', Arial, sans-serif;
-
-  svg {
-    margin-right: 10px;
-    width: 20px;
-    height: auto;
-    fill: white;
-    transition: all 0.3s ease;
-    transform: translateY(-2px);
-    transform-origin: center;
-    display: inline-block;
-    vertical-align: middle;
+/* Grands écrans : formulaire sur deux colonnes, l'éditeur de texte occupe toute la hauteur de la seconde */
+@media (min-width: 1280px) {
+  .params-panel {
+    flex-basis: clamp(460px, 100vw - 440px, 960px);
+    width: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "template template"
+      "identite capacites"
+      "caracteristiques capacites"
+      "layout illustration";
+    column-gap: 32px;
+    align-content: start;
   }
-  &:hover {
-    background-color: var(--color-gold-dark);
-    border-color: var(--color-gold-dark);
+  .segmented {
+    grid-area: template;
+    justify-self: start;
+    width: calc(50% - 16px);
   }
-}
-.btn-secondary {
-  background-color: white;
-  color: var(--color-gold);
-  border: 2px solid var(--color-gold);
+  .section-identite { grid-area: identite; }
+  .section-caracteristiques { grid-area: caracteristiques; }
+  .section-capacites { grid-area: capacites; }
+  .section-layout { grid-area: layout; }
+  .section-illustration { grid-area: illustration; }
 
-  svg {
-    fill: var(--color-gold);
-  }
-  &:hover {
-    background-color: white;
-    color: var(--color-gold-dark);
+  /* L'éditeur s'étire sur la hauteur disponible */
+  .section-capacites {
+    display: flex;
+    flex-direction: column;
 
-    svg {
-      fill: var(--color-gold-dark);
+    .fields, .param-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .rsw-editor {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .rsw-ce {
+      flex: 1;
     }
   }
 }
-.btn-big {
-  padding: 15px 20px;
+
+/* Écrans moyens : les libellés des actions disparaissent, seules les icônes restent */
+@media (max-width: 1100px) {
+  .toolbar .btn-label {
+    display: none;
+  }
+  .toolbar .btn {
+    padding: 8px 10px;
+  }
 }
 
-.reset-all-btn {
-  width: calc(50% - 10px);
-}
-.import-btn {
-  width: 50%;
-}
-.download-btn {
-  width: 100%;
-}
-
-/* Style pour le bouton flottant d'information */
-.info-button {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: #f5f5f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  z-index: 99;
-  transition: all 0.3s ease;
-}
-
-.info-button:hover {
-  background-color: #e0e0e0;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+/* Mobile : formulaire puis aperçu, l'un sous l'autre */
+@media (max-width: 800px) {
+  .banner {
+    padding: 0 12px;
+  }
+  .banner h1 {
+    font-size: 18px;
+  }
+  .content {
+    flex-direction: column;
+    height: auto;
+  }
+  .params-panel {
+    flex: none;
+    width: 100%;
+    padding: 12px 16px 24px;
+    border-right: none;
+    border-bottom: 1px solid var(--color-gold);
+    overflow: visible;
+  }
+  .image-panel {
+    padding: 16px;
+  }
+  .image-canvas {
+    height: auto;
+    width: 100%;
+    max-width: 360px;
+    min-height: 0;
+  }
 }
 
-.info-button svg {
-  width: 30px;
-  height: 30px;
-  color: #555;
-}
-
-.info-button:hover svg {
-  color: #333;
+/* Petit mobile : seul le logo reste à côté des actions */
+@media (max-width: 480px) {
+  .banner h1 {
+    display: none;
+  }
 }

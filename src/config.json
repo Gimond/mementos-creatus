@@ -4,14 +4,106 @@
     "height": 1609
   },
   "overlayImageSettings": {
-    "maxWidth": 535,
-    "maxHeight": 390,
-    "defaultWidth": 150,
-    "defaultHeight": 150
+    "x": 0,
+    "y": 0,
+    "width": 535,
+    "height": 390,
+    "minScale": 0.2,
+    "maxScale": 4
   },
+  "foldSettings": {
+    "width": 46,
+    "default": 46,
+    "presets": [
+      {
+        "width": 46,
+        "label": "Fin (écran COF2)"
+      },
+      {
+        "width": 106,
+        "label": "Moyen"
+      },
+      {
+        "width": 166,
+        "label": "Épais (écran en bois)"
+      }
+    ],
+    "stretchZones": [
+      [
+        452,
+        462
+      ],
+      [
+        476,
+        486
+      ]
+    ]
+  },
+  "playerLabelSettings": {
+    "default": "nom",
+    "options": [
+      {
+        "key": "nom"
+      },
+      {
+        "key": "type"
+      },
+      {
+        "key": "",
+        "label": "Masqué"
+      }
+    ],
+    "style": {
+      "x": 267,
+      "y": 425,
+      "fontSize": 26,
+      "color": "#b48333",
+      "fontFamily": "Rodfat",
+      "rotate": 180,
+      "textAlign": "center",
+      "maxWidth": 460
+    }
+  },
+  "templateSettings": {
+    "default": "pnj",
+    "options": [
+      {
+        "key": "pnj",
+        "label": "Créature (PNJ)"
+      },
+      {
+        "key": "pj",
+        "label": "Personnage (PJ)",
+        "separators": [
+          {
+            "x": 36,
+            "y": 850,
+            "width": 466,
+            "color": "#e0cca7"
+          }
+        ]
+      }
+    ]
+  },
+  "fieldGroups": [
+    {
+      "key": "identite",
+      "label": "Identité"
+    },
+    {
+      "key": "caracteristiques",
+      "label": "Caractéristiques"
+    },
+    {
+      "key": "capacites",
+      "label": "Attaques et capacités"
+    }
+  ],
   "fields": [
     {
       "id": 1,
+      "key": "nom",
+      "group": "identite",
       "type": "text",
       "label": "Nom",
       "value": "",
@@ -23,21 +115,15 @@
           "fontSize": 26,
           "color": "#b48333",
           "fontFamily": "Rodfat",
-          "textAlign": "center"
-        },
-        {
-          "x": 267,
-          "y": 425,
-          "fontSize": 26,
-          "color": "#b48333",
-          "fontFamily": "Rodfat",
-          "rotate": 180,
-          "textAlign": "center"
+          "textAlign": "center",
+          "maxWidth": 340
         }
       ]
     },
     {
       "id": 2,
+      "key": "type",
+      "group": "identite",
       "type": "text",
       "label": "Type",
       "value": "",
@@ -49,13 +135,20 @@
           "fontSize": 22,
           "color": "#b48333",
           "fontFamily": "Rodfat",
-          "prefix": "Créature ",
-          "textAlign": "center"
+          "textAlign": "center",
+          "maxWidth": 340
         }
-      ]
+      ],
+      "variants": {
+        "pj": {
+          "label": "Profil / peuple"
+        }
+      }
     },
     {
       "id": 3,
+      "key": "nc",
+      "group": "identite",
       "type": "text",
       "label": "NC",
       "value": "",
@@ -70,10 +163,28 @@
           "prefix": "NC ",
           "textAlign": "center"
         }
-      ]
+      ],
+      "variants": {
+        "pj": {
+          "label": "NV",
+          "style": [
+            {
+              "x": 454,
+              "y": 592,
+              "fontSize": 24,
+              "color": "#b48333",
+              "fontFamily": "Rodfat",
+              "prefix": "NV ",
+              "textAlign": "center"
+            }
+          ]
+        }
+      }
     },
     {
       "id": 4,
+      "key": "taille",
+      "group": "identite",
       "type": "text",
       "label": "Taille",
       "value": "",
@@ -82,15 +193,18 @@
         {
           "x": 36,
           "y": 676,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius",
-          "prefix": "Taille : "
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3",
+          "prefix": "Taille : ",
+          "hideWhenEmpty": true
         }
       ]
     },
     {
       "id": 5,
+      "key": "agi",
+      "group": "caracteristiques",
       "type": "text",
       "label": "AGI",
       "value": "",
@@ -99,14 +213,16 @@
         {
           "x": 79,
           "y": 718,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 6,
+      "key": "con",
+      "group": "caracteristiques",
       "type": "text",
       "label": "CON",
       "value": "",
@@ -115,14 +231,16 @@
         {
           "x": 203,
           "y": 718,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 7,
+      "key": "for",
+      "group": "caracteristiques",
       "type": "text",
       "label": "FOR",
       "value": "",
@@ -131,14 +249,16 @@
         {
           "x": 313,
           "y": 718,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 8,
+      "key": "per",
+      "group": "caracteristiques",
       "type": "text",
       "label": "PER",
       "value": "",
@@ -147,14 +267,16 @@
         {
           "x": 423,
           "y": 718,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 9,
+      "key": "cha",
+      "group": "caracteristiques",
       "type": "text",
       "label": "CHA",
       "value": "",
@@ -163,14 +285,16 @@
         {
           "x": 89,
           "y": 746,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 10,
+      "key": "int",
+      "group": "caracteristiques",
       "type": "text",
       "label": "INT",
       "value": "",
@@ -179,14 +303,16 @@
         {
           "x": 192,
           "y": 746,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 11,
+      "key": "vol",
+      "group": "caracteristiques",
       "type": "text",
       "label": "VOL",
       "value": "",
@@ -195,14 +321,16 @@
         {
           "x": 312,
           "y": 746,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 12,
+      "key": "def",
+      "group": "caracteristiques",
       "type": "text",
       "label": "DEF",
       "value": "",
@@ -211,14 +339,16 @@
         {
           "x": 119,
           "y": 794,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 13,
+      "key": "pv",
+      "group": "caracteristiques",
       "type": "text",
       "label": "PV",
       "value": "",
@@ -227,14 +357,16 @@
         {
           "x": 297,
           "y": 794,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         }
       ]
     },
     {
       "id": 14,
+      "key": "init",
+      "group": "caracteristiques",
       "type": "text",
       "label": "Init",
       "value": "",
@@ -243,9 +375,9 @@
         {
           "x": 459,
           "y": 794,
-          "fontSize": 20,
-          "color": "#424242",
-          "fontFamily": "Ikarius"
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3"
         },
         {
           "x": 452,
@@ -259,7 +391,55 @@
       ]
     },
     {
+      "id": 16,
+      "key": "pc",
+      "group": "caracteristiques",
+      "templates": [
+        "pj"
+      ],
+      "type": "text",
+      "label": "PC",
+      "value": "",
+      "fieldSize": "50",
+      "style": [
+        {
+          "x": 36,
+          "y": 839,
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3",
+          "caption": "PC",
+          "captionColor": "#414141"
+        }
+      ]
+    },
+    {
+      "id": 17,
+      "key": "dr",
+      "group": "caracteristiques",
+      "templates": [
+        "pj"
+      ],
+      "type": "text",
+      "label": "DR",
+      "value": "",
+      "fieldSize": "50",
+      "style": [
+        {
+          "x": 230,
+          "y": 839,
+          "fontSize": 21,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3",
+          "caption": "DR",
+          "captionColor": "#414141"
+        }
+      ]
+    },
+    {
       "id": 15,
+      "key": "texte",
+      "group": "capacites",
       "type": "editor",
       "label": "Texte",
       "value": "",
@@ -268,12 +448,30 @@
         {
           "x": 36,
           "y": 835,
-          "fontSize": 18,
-          "color": "#424242",
-          "fontFamily": "Ikarius",
-          "wrapText": true
+          "fontSize": 19,
+          "color": "#2b2b2b",
+          "fontFamily": "SourceSans3",
+          "wrapText": true,
+          "maxWidth": 470,
+          "maxY": 1580
         }
-      ]
+      ],
+      "variants": {
+        "pj": {
+          "style": [
+            {
+              "x": 36,
+              "y": 880,
+              "fontSize": 19,
+              "color": "#2b2b2b",
+              "fontFamily": "SourceSans3",
+              "wrapText": true,
+              "maxWidth": 470,
+              "maxY": 1580
+            }
+          ]
+        }
+      }
     }
   ]
 }

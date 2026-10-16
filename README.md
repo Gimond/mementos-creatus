@@ -11,7 +11,7 @@ Il s'agit d'un projet non officiel et open source.
 
 ### Prérequis
 
-- Node.js (v18.0.0 ou plus)
+- Node.js (v20.19.0 ou plus, requis par Vite 7)
 - npm (v8.0.0 ou plus)
 
 ### Installation
@@ -53,7 +53,7 @@ Personnalisez les champs et téléchargez votre memento au format PNG
 
 #### Importez
 L'importation permet de coller un bloc de statistiques copié directement depuis un PDF.
-Vous pouvez sélectionner le texte du nom de la créature jusqu'aux attaques (comprises), Les différentes descriptions suivantes ne seront pas reconnues et risquent de perturber la détection des attaques, mais vous pourrez les copier ensuite dans le bloc Texte.
+Vous pouvez sélectionner tout le bloc, du nom de la créature jusqu'à la fin de ses descriptions (capacités, équipement…) : les attaques et les descriptions sont ajoutées au bloc Texte.
 
 ## 🤝 Contribuer
 
@@ -67,8 +67,6 @@ Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à
 
 ## 🗺️ Roadmap
 
-- Permettre le déplacement et le changement de taille de l'image.
-- Ajouter une option pour choisir l'intitulé côté joueur (Nom de la créature, type ou masqué).
 - Ajouter une option sous le champ texte pour supprimer les sauts de ligne lorsque l'on colle un texte. 
 
 ## 📄 Licence

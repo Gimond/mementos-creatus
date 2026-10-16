@@ -65,6 +65,7 @@
 
 .modalContainer .body {
     width: 700px;
+    max-width: 100%;
     flex: 1;
     margin-bottom: 10px;
     display: flex;
@@ -98,4 +99,11 @@
 
 #cancelBtn {
 
+}
+
+@media (max-width: 800px) {
+    .modalContainer {
+        margin: 12px;
+        padding: 24px 16px;
+    }
 }

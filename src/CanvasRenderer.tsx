@@ -1,24 +1,40 @@
 import React, { useEffect, useRef } from 'react';
 import FontFaceObserver from 'fontfaceobserver';
-import type { CanvasRendererProps } from './types';
+import { withoutAccents } from './text';
+import { clampOffset, getOverlayRect, isPointOnOverlay, zoomAt } from './overlay';
+import type { CanvasRendererProps, FoldLayout, OverlayFrame, OverlayImageState } from './types';
 
 // Constantes
-const CANVAS_WIDTH = 535;
-const CANVAS_HEIGHT = 1609;
 const FONT_LOAD_TIMEOUT = 5000;
+
+const buildFont = (fontSize: number, fontFamily: string, bold = false, italic = false) => {
+    let fontStyle = '';
+    if (bold) fontStyle += 'bold ';
+    if (italic) fontStyle += 'italic ';
+    return `${fontStyle}${fontSize}px ${fontFamily}`;
+};
 
 const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                                                            fields,
+                                                           playerLabel,
+                                                           playerLabelStyle,
                                                            overlayImage,
+                                                           overlayFrame,
+                                                           overlayScaleRange,
+                                                           onOverlayChange,
+                                                           fold,
+                                                           separators,
                                                            onCanvasReady,
-                                                           width = CANVAS_WIDTH,
-                                                           height = CANVAS_HEIGHT
+                                                           onTextOverflow,
+                                                           width,
+                                                           height
                                                        }) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [backgroundImage, setBackgroundImage] = React.useState<HTMLImageElement | null>(null);
     const [fontsLoaded, setFontsLoaded] = React.useState(false);
 
     // Fonctions de dessin
+    // Retourne l'ordonnée de la dernière ligne dessinée
     const drawHtmlText = (
         ctx: CanvasRenderingContext2D,
         htmlContent: string,
@@ -32,6 +48,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
     ): number => {
         ctx.textAlign = 'left';
         let currentY = y;
+        let lastLineY = y;
 
         type TextSegment = {
             text: string;
@@ -49,15 +66,10 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
         ) => {
             let posX = startX;
             ctx.fillStyle = color;
+            lastLineY = lineY;
 
             for (const segment of segments) {
-                let fontStyle = '';
-                if (segment.bold) fontStyle += 'bold ';
-                if (segment.italic) fontStyle += 'italic ';
-
-                ctx.font = fontStyle
-                    ? `${fontStyle}${fontSize}px ${fontFamily}`
-                    : `${fontSize}px ${fontFamily}`;
+                ctx.font = buildFont(fontSize, fontFamily, segment.bold, segment.italic);
 
                 ctx.fillText(segment.text, posX, lineY);
                 posX += ctx.measureText(segment.text).width;
@@ -194,9 +206,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
                     const space = i < words.length - 1 ? ' ' : '';
                     const wordWithSpace = word + space;
 
-                    ctx.font = segment.bold
-                        ? `bold ${fontSize}px ${fontFamily}`
-                        : `${fontSize}px ${fontFamily}`;
+                    ctx.font = buildFont(fontSize, fontFamily, segment.bold, segment.italic);
 
                     const wordWidth = ctx.measureText(wordWithSpace).width;
 
@@ -221,57 +231,68 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
         };
 
         parseAndDrawHtml(htmlContent);
-        return currentY;
+        return lastLineY;
     };
 
-    const drawRotatedImage = (
+    // Dessine le fond en ajustant la largeur du pli : les bandes unies du pli sont étirées
+    // et tout ce qui est au-dessus remonte, la partie MJ et la hauteur totale ne bougent pas
+    const drawBackground = (
         ctx: CanvasRenderingContext2D,
         image: HTMLImageElement,
-        x: number,
-        y: number,
-        width: number,
-        height: number,
+        {offset, stretchZones}: FoldLayout
+    ) => {
+        const scaleY = image.height / height;
+        const stretch = offset / stretchZones.length;
+
+        // Segments [début, fin] du fond (coordonnées du canvas) et hauteur supplémentaire de chacun
+        const segments: { start: number, end: number, extra: number }[] = [];
+        let cursor = 0;
+        stretchZones.forEach(([start, end]) => {
+            segments.push({start: cursor, end: start, extra: 0});
+            segments.push({start, end, extra: stretch});
+            cursor = end;
+        });
+        segments.push({start: cursor, end: height, extra: 0});
+
+        // Le haut de la carte est rogné (ou étiré si le pli est réduit) pour compenser
+        segments[0].extra = -offset;
+        let sourceStart = Math.max(0, offset);
+
+        let destY = 0;
+        segments.forEach((segment, index) => {
+            const sourceEnd = segment.end;
+            const destHeight = segment.end - segment.start + segment.extra;
+            ctx.drawImage(
+                image,
+                0, sourceStart * scaleY, image.width, (sourceEnd - sourceStart) * scaleY,
+                0, destY, width, destHeight
+            );
+            destY += destHeight;
+            sourceStart = segments[index + 1]?.start ?? sourceEnd;
+        });
+    };
+
+    // Dessine l'illustration dans son cadre, retournée pour être lisible côté joueurs
+    const drawOverlayImage = (
+        ctx: CanvasRenderingContext2D,
+        overlay: OverlayImageState,
+        frame: OverlayFrame,
         angle: number
     ) => {
-        const containerWidth = 535;
-        const containerHeight = 390;
+        const {width: drawWidth, height: drawHeight, centerX, centerY} = getOverlayRect(overlay, frame);
 
-        // Calcul du ratio d'aspect
-        const imageAspectRatio = image.width / image.height;
-        const containerAspectRatio = containerWidth / containerHeight;
-
-        // Dimensions pour maintenir l'aspect ratio
-        let drawWidth, drawHeight;
-
-        if (imageAspectRatio > containerAspectRatio) {
-            drawWidth = containerWidth;
-            drawHeight = containerWidth / imageAspectRatio;
-        } else {
-            drawHeight = containerHeight;
-            drawWidth = containerHeight * imageAspectRatio;
-        }
-
-        if (drawWidth > width) {
-            drawWidth = width;
-            drawHeight = drawWidth / imageAspectRatio;
-        }
-        if (drawHeight > height) {
-            drawHeight = height;
-            drawWidth = drawHeight * imageAspectRatio;
-        }
-
-        // Calculer les coordonnées pour centrer l'image
-        const centerX = containerWidth / 2;
-        const centerY = containerHeight / 2;
-
-        // Appliquer la transformation
         ctx.save();
+
+        // L'image ne doit pas déborder du cadre
+        ctx.beginPath();
+        ctx.rect(frame.x, frame.y, frame.width, frame.height);
+        ctx.clip();
+
         ctx.translate(centerX, centerY);
-        ctx.translate(x, y);
         ctx.rotate(angle * Math.PI / 180);
 
         ctx.drawImage(
-            image,
+            overlay.image,
             -drawWidth / 2,
             -drawHeight / 2,
             drawWidth,
@@ -290,15 +311,23 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
         fontSize: number,
         textAlign: CanvasTextAlign | undefined,
         fontFamily: string,
-        color: string
+        color: string,
+        maxWidth?: number
     ): void => {
         if (fontFamily === 'Rodfat') {
-            text = text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+            text = withoutAccents(text);
         }
 
         ctx.textAlign = textAlign ?? 'left';
-        ctx.font = `${fontSize}px ${fontFamily}`;
+        ctx.font = buildFont(fontSize, fontFamily);
         ctx.fillStyle = color;
+
+        // Réduire la police si le texte dépasse de son cadre
+        const textWidth = ctx.measureText(text).width;
+        if (maxWidth && textWidth > maxWidth) {
+            fontSize = Math.floor(fontSize * maxWidth / textWidth);
+            ctx.font = buildFont(fontSize, fontFamily);
+        }
 
         ctx.save();
         ctx.translate(x, y);
@@ -335,54 +364,86 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
 
         // Dessiner l'image de fond
         if (backgroundImage) {
-            ctx.drawImage(backgroundImage, 0, 0, width, height);
+            drawBackground(ctx, backgroundImage, fold);
         }
 
         // Dessiner l'image superposée
         if (overlayImage.isLoaded) {
-            drawRotatedImage(
-                ctx,
-                overlayImage.image,
-                overlayImage.x,
-                overlayImage.y,
-                overlayImage.width,
-                overlayImage.height,
-                180
-            );
+            drawOverlayImage(ctx, overlayImage, overlayFrame, 180);
         }
 
+        // Traits de séparation propres au modèle
+        separators.forEach(separator => {
+            ctx.fillStyle = separator.color;
+            ctx.fillRect(separator.x, separator.y, separator.width, 1);
+        });
+
         // Dessiner les textes
+        let textOverflow = false;
         if (fontsLoaded) {
             fields.forEach(field => {
                 field.style.forEach(style => {
+                    if (style.hideWhenEmpty && field.value.trim() === '') {
+                        return;
+                    }
+
                     if (field.type === 'editor') {
-                        drawHtmlText(
+                        const lastLineY = drawHtmlText(
                             ctx,
                             field.value,
                             style.x,
                             style.y,
-                            470,
+                            style.maxWidth ?? width - 2 * style.x,
                             1.3 * style.fontSize,
                             style.fontSize,
                             style.fontFamily,
                             style.color
                         );
+                        if (lastLineY > (style.maxY ?? height)) {
+                            textOverflow = true;
+                        }
                     } else {
+                        let x = style.x;
+                        if (style.caption) {
+                            ctx.textAlign = 'left';
+                            ctx.font = buildFont(style.fontSize, style.fontFamily, true);
+                            ctx.fillStyle = style.captionColor ?? style.color;
+                            ctx.fillText(style.caption, x, style.y);
+                            x += ctx.measureText(style.caption).width + style.fontSize * 0.4;
+                        }
+
                         drawRotatedText(
                             ctx,
                             (style.prefix ?? '') + field.value,
-                            style.x,
+                            x,
                             style.y,
                             style.rotate ?? 0,
                             style.fontSize,
                             style.textAlign,
                             style.fontFamily,
-                            style.color
+                            style.color,
+                            style.maxWidth
                         );
                     }
                 });
             });
+
+            // Intitulé côté joueurs, retourné
+            drawRotatedText(
+                ctx,
+                playerLabel,
+                playerLabelStyle.x,
+                playerLabelStyle.y,
+                playerLabelStyle.rotate ?? 0,
+                playerLabelStyle.fontSize,
+                playerLabelStyle.textAlign,
+                playerLabelStyle.fontFamily,
+                playerLabelStyle.color,
+                playerLabelStyle.maxWidth
+            );
         }
+
+        onTextOverflow?.(textOverflow);
     };
 
     // Chargement initial des ressources
@@ -395,13 +456,15 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
         };
 
         // Chargement des polices
-        const rodfatFont = new FontFaceObserver('Rodfat');
-        const ikariusFont = new FontFaceObserver('Ikarius');
+        const fonts = [
+            new FontFaceObserver('Rodfat'),
+            new FontFaceObserver('SourceSans3'),
+            new FontFaceObserver('SourceSans3', {weight: 700}),
+            new FontFaceObserver('SourceSans3', {style: 'italic'}),
+            new FontFaceObserver('SourceSans3', {weight: 700, style: 'italic'}),
+        ];
 
-        Promise.all([
-            rodfatFont.load(null, FONT_LOAD_TIMEOUT),
-            ikariusFont.load(null, FONT_LOAD_TIMEOUT)
-        ])
+        Promise.all(fonts.map(font => font.load(null, FONT_LOAD_TIMEOUT)))
             .then(() => {
                 console.log('Polices chargées !');
                 setFontsLoaded(true);
@@ -415,7 +478,7 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
     // Mise à jour du canvas lors des changements
     useEffect(() => {
         drawCanvas();
-    }, [fields, overlayImage, backgroundImage, fontsLoaded]);
+    }, [fields, playerLabel, playerLabelStyle, overlayImage, overlayFrame, fold, separators, backgroundImage, fontsLoaded]);
 
     // Fournir la référence du canvas au parent si nécessaire
     useEffect(() => {
@@ -424,12 +487,85 @@ const CanvasRenderer: React.FC<CanvasRendererProps> = ({
         }
     }, [canvasRef, onCanvasReady]);
 
+    // Déplacement et zoom de l'illustration à la souris
+    const dragStart = useRef<{ x: number, y: number, offsetX: number, offsetY: number } | null>(null);
+
+    const toCanvasPoint = (e: { clientX: number, clientY: number }) => {
+        const canvas = canvasRef.current!;
+        const rect = canvas.getBoundingClientRect();
+        return {
+            x: (e.clientX - rect.left) * canvas.width / rect.width,
+            y: (e.clientY - rect.top) * canvas.height / rect.height,
+        };
+    };
+
+    const handlePointerDown = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const point = toCanvasPoint(e);
+        if (!onOverlayChange || !isPointOnOverlay(point, overlayImage, overlayFrame)) return;
+
+        e.currentTarget.setPointerCapture(e.pointerId);
+        dragStart.current = {...point, offsetX: overlayImage.offsetX, offsetY: overlayImage.offsetY};
+        e.currentTarget.style.cursor = 'grabbing';
+    };
+
+    const handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        const point = toCanvasPoint(e);
+        const start = dragStart.current;
+
+        if (start) {
+            onOverlayChange?.(clampOffset(
+                start.offsetX + point.x - start.x,
+                start.offsetY + point.y - start.y,
+                overlayFrame
+            ));
+        } else {
+            const hover = onOverlayChange && isPointOnOverlay(point, overlayImage, overlayFrame);
+            e.currentTarget.style.cursor = hover ? 'grab' : '';
+        }
+    };
+
+    const handlePointerUp = (e: React.PointerEvent<HTMLCanvasElement>) => {
+        if (!dragStart.current) return;
+        dragStart.current = null;
+        e.currentTarget.releasePointerCapture(e.pointerId);
+        e.currentTarget.style.cursor = 'grab';
+    };
+
+    // La molette n'agit que sur l'image : ailleurs, la page défile normalement.
+    // L'écouteur est natif car React enregistre "wheel" en passif, ce qui empêche preventDefault.
+    const wheelState = useRef({overlayImage, overlayFrame, overlayScaleRange, onOverlayChange});
+    useEffect(() => {
+        wheelState.current = {overlayImage, overlayFrame, overlayScaleRange, onOverlayChange};
+    });
+
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            const {overlayImage, overlayFrame, overlayScaleRange, onOverlayChange} = wheelState.current;
+            const point = toCanvasPoint(e);
+            if (!onOverlayChange || !isPointOnOverlay(point, overlayImage, overlayFrame)) return;
+
+            e.preventDefault();
+            const factor = Math.exp(-e.deltaY * 0.0015);
+            onOverlayChange(zoomAt(overlayImage, overlayFrame, point, factor, overlayScaleRange));
+        };
+
+        canvas.addEventListener('wheel', handleWheel, {passive: false});
+        return () => canvas.removeEventListener('wheel', handleWheel);
+    }, []);
+
     return (
         <canvas
             ref={canvasRef}
             width={width}
             height={height}
             className="image-canvas"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
         />
     );
 };
