@@ -11,6 +11,8 @@ Variables
   --color-dark-blue: #1c1833;
   --color-panel: #f7f7f5;
   --banner-height: 64px;
+  --preview-toolbar-height: 36px;
+  --preview-hint-height: 28px;
 }
 
 html, body {
@@ -138,20 +140,6 @@ html, body {
   }
 }
 
-/* Bouton discret sur fond clair */
-.btn-ghost-dark {
-  background-color: transparent;
-  border-color: transparent;
-  color: var(--color-grey);
-  font-family: inherit;
-
-  &:hover {
-    background-color: transparent;
-    border-color: transparent;
-    color: #b3261e;
-  }
-}
-
 .btn-small {
   font-size: 14px;
   padding: 6px 12px;
@@ -177,6 +165,16 @@ html, body {
   &:hover {
     color: white;
     background-color: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.btn-icon-small {
+  width: 32px;
+  height: 32px;
+
+  svg {
+    width: 17px;
+    height: 17px;
   }
 }
 
@@ -283,8 +281,73 @@ html, body {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
+/* Barre d'outils de l'aperçu : illustration et réglages de la carte */
+.preview-toolbar {
+  width: 100%;
+  max-width: 560px;
+  height: var(--preview-toolbar-height);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  label.btn {
+    margin: 0;
+  }
+  .visually-hidden:focus-visible + label.btn {
+    outline: 2px solid var(--color-gold);
+    outline-offset: 2px;
+  }
+}
+
+.preview-image-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.preview-hint {
+  height: var(--preview-hint-height);
+  margin: 0;
+  font-size: 12px;
+  line-height: var(--preview-hint-height);
+  color: rgba(255, 255, 255, 0.55);
+  white-space: nowrap;
+}
+
+.preview-canvas {
+  position: relative;
+}
+
+/* Menu déroulant */
+.dropdown {
+  position: relative;
+  flex-shrink: 0;
+
+  .dropdown-chevron {
+    width: 11px;
+    height: 11px;
+  }
+}
+
+.dropdown-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 20;
+  width: 300px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 8px;
+  background-color: white;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
 .image-canvas {
-  height: calc(100vh - var(--banner-height) - 40px);
+  height: calc(100vh - var(--banner-height) - 40px - var(--preview-toolbar-height) - var(--preview-hint-height));
   min-height: 750px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
@@ -311,6 +374,13 @@ html, body {
   }
 }
 
+.param-group.new-row {
+  &.width-25 { grid-column: 1 / span 3; }
+  &.width-33 { grid-column: 1 / span 4; }
+  &.width-50 { grid-column: 1 / span 6; }
+  &.width-75 { grid-column: 1 / span 9; }
+}
+
 .param-group label {
   display: block;
   margin-bottom: 2px;
@@ -332,12 +402,6 @@ html, body {
   }
 }
 
-.param-group.field-hint {
-  margin: 0;
-  font-size: 13px;
-  color: #77736b;
-}
-
 .param-group .field-warning {
   margin-top: 4px;
   font-size: 13px;
@@ -351,30 +415,19 @@ html, body {
   accent-color: var(--color-gold);
 }
 
-.param-group.file-actions {
+/* Caractéristiques : libellé à gauche du champ, valeurs centrées */
+.section-caracteristiques .param-group {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 
-  .visually-hidden {
-    width: 1px;
-    padding: 0;
-    border: 0;
-  }
-  label.btn {
-    display: inline-flex;
+  label {
+    flex: 0 0 34px;
     margin: 0;
-    font-weight: normal;
-    font-size: 14px;
-    color: var(--color-gold);
-
-    &:hover {
-      color: var(--color-gold-dark);
-    }
   }
-  .visually-hidden:focus-visible + label.btn {
-    outline: 2px solid var(--color-gold);
-    outline-offset: 2px;
+  input {
+    min-width: 0;
+    text-align: center;
   }
 }
 
@@ -399,11 +452,11 @@ body .rsw-editor {
     width: auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto 1fr;
     grid-template-areas:
       "template template"
       "identite capacites"
-      "caracteristiques capacites"
-      "layout illustration";
+      "caracteristiques capacites";
     column-gap: 32px;
     align-content: start;
   }
@@ -415,8 +468,6 @@ body .rsw-editor {
   .section-identite { grid-area: identite; }
   .section-caracteristiques { grid-area: caracteristiques; }
   .section-capacites { grid-area: capacites; }
-  .section-layout { grid-area: layout; }
-  .section-illustration { grid-area: illustration; }
 
   /* L'éditeur s'étire sur la hauteur disponible */
   .section-capacites {

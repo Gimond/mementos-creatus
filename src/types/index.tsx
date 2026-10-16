@@ -25,6 +25,8 @@ export interface Field {
     value: string;
     type: string;
     fieldSize?: string;
+    // Le champ commence une nouvelle ligne du formulaire
+    newRow?: boolean;
     style: TextStyle[];
     // Modèles de mémento où le champ apparaît (tous si absent)
     templates?: string[];

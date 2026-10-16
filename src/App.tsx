@@ -8,7 +8,8 @@ import logoImage from './assets/logo.png';
 import configData from './config.json';
 import {withoutAccents} from './text';
 import type { Field, FoldLayout, OverlayFrame, OverlayImageState, OverlayPlacement, PlayerLabelOption, Separator, TextStyle } from './types';
-import {BsPlusCircle, BsBoxArrowInRight, BsImage, BsInfoCircle} from 'react-icons/bs';
+import {BsArrowCounterclockwise, BsBoxArrowInRight, BsGear, BsImage, BsInfoCircle, BsPlusCircle, BsTrash} from 'react-icons/bs';
+import {Dropdown} from './Dropdown.tsx';
 
 // Get vars from config.json
 const CANVAS_WIDTH = configData.canvasSettings.width;
@@ -245,7 +246,8 @@ function App() {
     };
 
     const renderField = (field: Field) => (
-        <div key={`param-group-${field.id}`} className={`param-group width-${field.fieldSize ?? '100'}`}>
+        <div key={`param-group-${field.id}`}
+             className={`param-group width-${field.fieldSize ?? '100'}${field.newRow ? ' new-row' : ''}`}>
             <label htmlFor={`text-${field.id}`}>{field.label}</label>
             <FieldInput field={field} onChange={handleTextChange}/>
             {field.type === 'editor' && textOverflow && (
@@ -305,46 +307,43 @@ function App() {
                             </div>
                         </section>
                     ))}
+                </div>
 
-                    <section className="form-section section-illustration">
-                        <h2>Illustration</h2>
-                        <div className="fields">
-                            <div className="param-group width-100 file-actions">
-                                <input
-                                    type="file"
-                                    id="overlay-image"
-                                    className="visually-hidden"
-                                    accept="image/*"
-                                    onChange={handleImageChange}
-                                />
-                                <label htmlFor="overlay-image" className="btn btn-secondary btn-small">
-                                    <BsImage/>
-                                    {overlayImage.isLoaded ? "Remplacer l'image" : 'Choisir une image'}
-                                </label>
-                                {overlayImage.isLoaded && (
-                                    <>
-                                        <button className="btn btn-ghost-dark btn-small" onClick={resetPlacement}>
-                                            Recentrer
-                                        </button>
-                                        <button className="btn btn-ghost-dark btn-small" onClick={resetImage}>
-                                            Retirer
-                                        </button>
-                                    </>
-                                )}
-                            </div>
-
+                <div
+                    className={`image-panel${isDraggingImage ? ' dragging' : ''}`}
+                    onDragOver={handleImageDragOver}
+                    onDragLeave={handleImageDragLeave}
+                    onDrop={handleImageDrop}
+                >
+                    <div className="preview-toolbar">
+                        <div className="preview-image-actions">
+                            <input
+                                type="file"
+                                id="overlay-image"
+                                className="visually-hidden"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                            />
+                            <label htmlFor="overlay-image" className="btn btn-ghost btn-small">
+                                <BsImage/>
+                                {overlayImage.isLoaded ? 'Remplacer' : 'Choisir une image'}
+                            </label>
                             {overlayImage.isLoaded && (
-                                <p className="param-group width-100 field-hint">
-                                    Glissez l'image sur l'aperçu pour la déplacer, molette pour zoomer.
-                                </p>
+                                <>
+                                    <button className="btn-icon btn-icon-small" onClick={resetPlacement}
+                                            title="Recentrer l'image" aria-label="Recentrer l'image">
+                                        <BsArrowCounterclockwise/>
+                                    </button>
+                                    <button className="btn-icon btn-icon-small" onClick={resetImage}
+                                            title="Retirer l'image" aria-label="Retirer l'image">
+                                        <BsTrash/>
+                                    </button>
+                                </>
                             )}
                         </div>
-                    </section>
 
-                    <section className="form-section section-layout">
-                        <h2>Mise en page</h2>
-                        <div className="fields">
-                            <div className="param-group width-100">
+                        <Dropdown label={withoutAccents('Réglages')} icon={<BsGear/>}>
+                            <div className="param-group">
                                 <label htmlFor="player-label">Intitulé côté joueurs</label>
                                 <select
                                     id="player-label"
@@ -359,7 +358,7 @@ function App() {
                                 </select>
                             </div>
 
-                            <div className="param-group width-100">
+                            <div className="param-group">
                                 <label htmlFor="fold-width">Largeur du pli</label>
                                 <select
                                     id="fold-width"
@@ -374,7 +373,7 @@ function App() {
                                 </select>
                             </div>
 
-                            <div className="param-group width-100">
+                            <div className="param-group">
                                 <label htmlFor="background">Fond de carte</label>
                                 <select
                                     id="background"
@@ -386,35 +385,36 @@ function App() {
                                     ))}
                                 </select>
                             </div>
-                        </div>
-                    </section>
-                </div>
+                        </Dropdown>
+                    </div>
 
-                <div
-                    className={`image-panel${isDraggingImage ? ' dragging' : ''}`}
-                    onDragOver={handleImageDragOver}
-                    onDragLeave={handleImageDragLeave}
-                    onDrop={handleImageDrop}
-                >
-                    {isDraggingImage && (
-                        <div className="drop-hint">{withoutAccents("Déposez l'image ici")}</div>
-                    )}
-                    <CanvasRenderer
-                        fields={displayedFields}
-                        playerLabel={playerLabel}
-                        playerLabelStyle={playerLabelStyle}
-                        overlayImage={overlayImage}
-                        overlayFrame={overlayFrame}
-                        overlayScaleRange={OVERLAY_SCALE_RANGE}
-                        onOverlayChange={updatePlacement}
-                        fold={fold}
-                        backgroundSrc={backgroundSrc}
-                        separators={separators}
-                        onCanvasReady={handleCanvasReady}
-                        onTextOverflow={setTextOverflow}
-                        width={CANVAS_WIDTH}
-                        height={CANVAS_HEIGHT}
-                    />
+                    <p className="preview-hint">
+                        {overlayImage.isLoaded
+                            ? 'Glissez l\'image pour la déplacer, molette pour zoomer'
+                            : 'Vous pouvez aussi déposer une image sur la carte'}
+                    </p>
+
+                    <div className="preview-canvas">
+                        {isDraggingImage && (
+                            <div className="drop-hint">{withoutAccents("Déposez l'image ici")}</div>
+                        )}
+                        <CanvasRenderer
+                            fields={displayedFields}
+                            playerLabel={playerLabel}
+                            playerLabelStyle={playerLabelStyle}
+                            overlayImage={overlayImage}
+                            overlayFrame={overlayFrame}
+                            overlayScaleRange={OVERLAY_SCALE_RANGE}
+                            onOverlayChange={updatePlacement}
+                            fold={fold}
+                            backgroundSrc={backgroundSrc}
+                            separators={separators}
+                            onCanvasReady={handleCanvasReady}
+                            onTextOverflow={setTextOverflow}
+                            width={CANVAS_WIDTH}
+                            height={CANVAS_HEIGHT}
+                        />
+                    </div>
                 </div>
             </main>
 

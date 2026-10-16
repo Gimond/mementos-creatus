@@ -349,7 +349,8 @@
       "type": "text",
       "label": "DEF",
       "value": "",
-      "fieldSize": "33",
+      "fieldSize": "25",
+      "newRow": true,
       "style": [
         {
           "x": 119,
@@ -367,7 +368,7 @@
       "type": "text",
       "label": "PV",
       "value": "",
-      "fieldSize": "33",
+      "fieldSize": "25",
       "style": [
         {
           "x": 297,
@@ -385,7 +386,7 @@
       "type": "text",
       "label": "Init",
       "value": "",
-      "fieldSize": "33",
+      "fieldSize": "25",
       "style": [
         {
           "x": 459,
@@ -415,7 +416,8 @@
       "type": "text",
       "label": "PC",
       "value": "",
-      "fieldSize": "50",
+      "fieldSize": "25",
+      "newRow": true,
       "style": [
         {
           "x": 36,
@@ -438,7 +440,7 @@
       "type": "text",
       "label": "DR",
       "value": "",
-      "fieldSize": "50",
+      "fieldSize": "25",
       "style": [
         {
           "x": 230,
