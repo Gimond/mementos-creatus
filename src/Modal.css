@@ -93,14 +93,6 @@
     margin-top: 20px;
 }
 
-.modalContainer .footer button {
-
-}
-
-#cancelBtn {
-
-}
-
 @media (max-width: 800px) {
     .modalContainer {
         margin: 12px;

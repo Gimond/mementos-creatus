@@ -72,6 +72,7 @@ export interface FoldLayout {
 }
 
 export interface CanvasRendererProps {
+    ref?: React.Ref<HTMLCanvasElement>;
     fields: Field[];
     playerLabel: string;
     playerLabelStyle: TextStyle;
@@ -82,7 +83,6 @@ export interface CanvasRendererProps {
     fold: FoldLayout;
     backgroundSrc: string;
     separators: Separator[];
-    onCanvasReady?: (canvasRef: React.RefObject<HTMLCanvasElement>) => void;
     onTextOverflow?: (overflow: boolean) => void;
     width: number;
     height: number;

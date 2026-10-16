@@ -11,7 +11,7 @@ import type { Field, FoldLayout, OverlayFrame, OverlayImageState, OverlayPlaceme
 import {BsArrowCounterclockwise, BsBoxArrowInRight, BsGear, BsImage, BsInfoCircle, BsPlusCircle, BsTrash} from 'react-icons/bs';
 import {Dropdown} from './Dropdown.tsx';
 
-// Get vars from config.json
+// Réglages issus de config.json
 const CANVAS_WIDTH = configData.canvasSettings.width;
 const CANVAS_HEIGHT = configData.canvasSettings.height;
 const OVERLAY_FRAME: OverlayFrame = configData.overlayImageSettings;
@@ -82,6 +82,8 @@ function useOverlayImage() {
     const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) loadImageFile(file);
+        // Permet de choisir à nouveau le même fichier
+        e.target.value = '';
     };
 
     const updatePlacement = (placement: Partial<OverlayPlacement>) => {
@@ -94,17 +96,11 @@ function useOverlayImage() {
 
     const resetImage = () => {
         setOverlayImage(EMPTY_OVERLAY);
-
-        const fileInput = document.getElementById('overlay-image') as HTMLInputElement;
-        if (fileInput) {
-            fileInput.value = '';
-        }
     };
 
     return {overlayImage, loadImageFile, handleImageChange, updatePlacement, resetPlacement, resetImage};
 }
 
-// Composant extrait pour le rendu d'un champ
 function FieldInput({field, onChange}: { field: Field, onChange: (id: number, value: string) => void }) {
     if (field.type === 'editor') {
         return (
@@ -164,59 +160,36 @@ function App() {
         y: PLAYER_LABEL_STYLE.y - foldOffset
     }), [foldOffset]);
 
-    // Gestionnaires d'événements pour les champs
     const handleTextChange = (id: number, value: string) => {
-        setFields(fields.map(item =>
-            item.id === id ? {...item, value} : item
-        ));
+        setFields(current => current.map(field => field.id === id ? {...field, value} : field));
     };
 
-    // Gestionnaires d'événements pour les actions principales
     const handleReset = () => {
         if (window.confirm('Cette action va vider tous les champs, êtes-vous sûr ?')) {
-            setFields(fields.map(field => ({...field, value: ''})));
+            setFields(current => current.map(field => ({...field, value: ''})));
             resetImage();
         }
     };
 
     const handleDownload = () => {
-        // const canvas = document.querySelector('canvas');
         const canvas = canvasRef.current;
         if (!canvas) return;
 
-        const imageURL = canvas.toDataURL('image/png');
+        const name = fields.find(field => field.key === 'nom')?.value;
         const downloadLink = document.createElement('a');
-        downloadLink.href = imageURL;
-
-        const nameField = fields.find(f => f.key === 'nom');
-        downloadLink.download = nameField?.value ? `${nameField.value}.png` : 'memento.png';
-
-        document.body.appendChild(downloadLink);
+        downloadLink.href = canvas.toDataURL('image/png');
+        downloadLink.download = name ? `${name}.png` : 'memento.png';
         downloadLink.click();
-        document.body.removeChild(downloadLink);
-    };
-
-    // Gestionnaires d'événements pour l'importation des statblocks
-    const handleImportStatblock = () => {
-        setModalOpen(true);
     };
 
     const handleImportAttributes = () => {
-        if (!statBlockRef.current?.attributes) return;
+        const attributes = statBlockRef.current?.attributes;
+        if (!attributes) return;
 
-        const attributes = statBlockRef.current.attributes;
-        const updatedFields = fields.map(field =>
+        setFields(current => current.map(field =>
             attributes[field.key] ? {...field, value: attributes[field.key]} : field
-        );
-
-        setFields(updatedFields);
+        ));
         setModalOpen(false);
-    };
-
-    const handleCanvasReady = (canvasRefFromChild: React.RefObject<HTMLCanvasElement>) => {
-        if (canvasRefFromChild && canvasRefFromChild.current) {
-            canvasRef.current = canvasRefFromChild.current;
-        }
     };
 
     // Dépôt d'une image sur la zone de rendu
@@ -239,10 +212,6 @@ function App() {
         setIsDraggingImage(false);
         const file = Array.from(e.dataTransfer.files).find(f => f.type.startsWith('image/'));
         if (file) loadImageFile(file);
-    };
-
-    const handleInfoClick = () => {
-        setInfoModalOpen(true);
     };
 
     const renderField = (field: Field) => (
@@ -269,7 +238,7 @@ function App() {
                         <BsPlusCircle/>
                         <span className="btn-label">Nouveau</span>
                     </button>
-                    <button className="btn btn-ghost" onClick={handleImportStatblock} title="Importer un statblock">
+                    <button className="btn btn-ghost" onClick={() => setModalOpen(true)} title="Importer un statblock">
                         <BsBoxArrowInRight/>
                         <span className="btn-label">Importer un statblock</span>
                     </button>
@@ -277,7 +246,7 @@ function App() {
                         <BsImage/>
                         <span className="btn-label">{withoutAccents('Télécharger')}</span>
                     </button>
-                    <button className="btn-icon" onClick={handleInfoClick} title="À propos" aria-label="À propos">
+                    <button className="btn-icon" onClick={() => setInfoModalOpen(true)} title="À propos" aria-label="À propos">
                         <BsInfoCircle/>
                     </button>
                 </nav>
@@ -399,6 +368,7 @@ function App() {
                             <div className="drop-hint">{withoutAccents("Déposez l'image ici")}</div>
                         )}
                         <CanvasRenderer
+                            ref={canvasRef}
                             fields={displayedFields}
                             playerLabel={playerLabel}
                             playerLabelStyle={playerLabelStyle}
@@ -409,7 +379,6 @@ function App() {
                             fold={fold}
                             backgroundSrc={backgroundSrc}
                             separators={separators}
-                            onCanvasReady={handleCanvasReady}
                             onTextOverflow={setTextOverflow}
                             width={CANVAS_WIDTH}
                             height={CANVAS_HEIGHT}

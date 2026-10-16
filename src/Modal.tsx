@@ -51,7 +51,7 @@ export const Modal: React.FC<Props> = (props) => {
 
                 <div className="footer">
                     {secondaryFn && (
-                        <button className="btn btn-secondary" onClick={secondaryFn} id="cancelBtn">
+                        <button className="btn btn-secondary" onClick={secondaryFn}>
                             Annuler
                         </button>
                     )}
