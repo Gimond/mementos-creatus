@@ -68,6 +68,13 @@ Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une issue ou à
 ## 🗺️ Roadmap
 
 - Ajouter une option sous le champ texte pour supprimer les sauts de ligne lorsque l'on colle un texte. 
+- Ajouter un historique des mementos stocké dans le navigateur, sans serveur :
+  - brouillon sauvegardé automatiquement ;
+  - bouton « Sauvegarder » pour ajouter un memento à l'historique sans le télécharger (par exemple pour une planche A4 plus tard) ;
+  - liste des mementos sauvegardés ou téléchargés, avec vignette (ouvrir, dupliquer, supprimer) ;
+  - export/import en JSON pour sauvegarder ou changer d'appareil ;
+  - illustrations stockées dans IndexedDB, car trop lourdes pour le localStorage.
+- Permettre de sélectionner plusieurs mementos de l'historique et de générer une planche A4 prête à imprimer.
 
 ## 📄 Licence
 
